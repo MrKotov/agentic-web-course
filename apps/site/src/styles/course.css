@@ -1,0 +1,143 @@
+/* Course site theme.
+   Two hard requirements drive everything here:
+   - readable from the back of a lecture hall on a 1080p projector at full screen,
+   - usable at 400px wide on a phone.
+   Colours are expressed only through Starlight's theme variables so light and dark
+   both work without a second palette. */
+
+:root {
+  --course-content-width: 60rem;
+  --course-radius: 0.5rem;
+  /* Component surface tokens. Light theme values. */
+  --course-surface: var(--sl-color-gray-7, #f6f6f9);
+  --course-surface-raised: var(--sl-color-white);
+  --course-border: var(--sl-color-gray-5);
+  --course-accent: var(--sl-color-accent);
+  --course-accent-text: var(--sl-color-accent-high);
+  --course-ok: #1a7f4b;
+  --course-warn: #9a6400;
+  --course-bad: #b3261e;
+  --course-mono: var(--__sl-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+
+:root[data-theme='dark'] {
+  --course-surface: var(--sl-color-gray-6, #1c1f2b);
+  --course-surface-raised: var(--sl-color-gray-7, #16181f);
+  --course-border: var(--sl-color-gray-5);
+  --course-ok: #5ddb9b;
+  --course-warn: #f0c060;
+  --course-bad: #ff8a80;
+}
+
+/* ---- Hall readability -------------------------------------------------- */
+/* Starlight's default body text is 16px. That is not readable from row 12.
+   Scale with the viewport, but never below the mobile-comfortable size. */
+:root {
+  --sl-text-body: clamp(1rem, 0.82rem + 0.55vw, 1.35rem);
+  --sl-text-code: clamp(0.9rem, 0.74rem + 0.5vw, 1.2rem);
+  --sl-line-height: 1.75;
+  --sl-content-width: var(--course-content-width);
+}
+
+.sl-markdown-content h1 { font-size: clamp(1.9rem, 1.3rem + 2.2vw, 3.2rem); line-height: 1.15; }
+.sl-markdown-content h2 { font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.3rem); line-height: 1.2; }
+.sl-markdown-content h3 { font-size: clamp(1.2rem, 1rem + 0.9vw, 1.7rem); }
+.sl-markdown-content :is(p, li) { max-width: 46em; }
+.sl-markdown-content pre { font-size: var(--sl-text-code); }
+
+/* ---- Narrow screens (400px is the floor we support) -------------------- */
+@media (max-width: 30rem) {
+  :root { --sl-text-body: 1rem; --sl-line-height: 1.65; }
+  .sl-markdown-content :is(table, pre) { font-size: 0.9rem; }
+  .course-panel { padding: 0.75rem; }
+}
+
+/* Anything wide scrolls inside itself; the page never scrolls sideways. */
+.sl-markdown-content :is(table, .course-scroll-x) { display: block; max-width: 100%; overflow-x: auto; }
+
+/* ---- Shared component chrome ------------------------------------------ */
+.course-panel {
+  background: var(--course-surface);
+  border: 1px solid var(--course-border);
+  border-radius: var(--course-radius);
+  padding: 1rem;
+  margin-block: 1.5rem;
+  container-type: inline-size;
+}
+.course-panel__head {
+  display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
+  justify-content: space-between; margin-bottom: 0.75rem;
+}
+.course-panel__title { font-weight: 700; font-size: 1.05em; margin: 0; }
+.course-controls { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+
+.course-btn {
+  font: inherit; font-weight: 600;
+  padding: 0.5em 1em; min-height: 2.75rem;
+  border-radius: var(--course-radius);
+  border: 1px solid var(--course-border);
+  background: var(--course-surface-raised);
+  color: var(--sl-color-white);
+  cursor: pointer;
+}
+.course-btn:hover:not(:disabled) { border-color: var(--course-accent); }
+.course-btn[data-variant='primary'] { background: var(--course-accent); color: var(--sl-color-black); border-color: transparent; }
+.course-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.course-btn:focus-visible, .course-input:focus-visible { outline: 3px solid var(--course-accent); outline-offset: 2px; }
+
+.course-input, .course-select, .course-textarea {
+  font: inherit; width: 100%;
+  padding: 0.5em 0.7em; min-height: 2.75rem;
+  color: var(--sl-color-white);
+  background: var(--course-surface-raised);
+  border: 1px solid var(--course-border);
+  border-radius: var(--course-radius);
+}
+.course-textarea { font-family: var(--course-mono); min-height: 7rem; resize: vertical; }
+
+.course-badge {
+  display: inline-block; font-size: 0.8em; font-weight: 700;
+  padding: 0.15em 0.6em; border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.course-badge[data-tone='ok'] { color: var(--course-ok); }
+.course-badge[data-tone='warn'] { color: var(--course-warn); }
+.course-badge[data-tone='bad'] { color: var(--course-bad); }
+
+.course-note { font-size: 0.9em; opacity: 0.85; }
+.course-mono { font-family: var(--course-mono); }
+
+/* ---- React Flow: force both themes to render correctly ----------------- */
+/* React Flow ships a light-only stylesheet. These overrides repaint it from the
+   Starlight tokens so the dark theme is not a white box with white text. */
+.react-flow.course-flow {
+  --xy-background-color: var(--course-surface);
+  --xy-node-background-color: var(--course-surface-raised);
+  --xy-node-color: var(--sl-color-white);
+  --xy-node-border: 1px solid var(--course-border);
+  --xy-edge-stroke: var(--sl-color-gray-3);
+  --xy-edge-stroke-selected: var(--course-accent);
+  --xy-controls-button-background-color: var(--course-surface-raised);
+  --xy-controls-button-background-color-hover: var(--course-surface);
+  --xy-controls-button-color: var(--sl-color-white);
+  --xy-controls-button-border-color: var(--course-border);
+  --xy-attribution-background-color: transparent;
+  background: var(--course-surface);
+  color: var(--sl-color-white);
+}
+.react-flow.course-flow .react-flow__background { color: var(--sl-color-gray-4); }
+.react-flow.course-flow .react-flow__handle { background: var(--course-accent); border-color: var(--course-surface-raised); }
+.react-flow.course-flow .react-flow__attribution a { color: var(--sl-color-gray-3); }
+
+/* ---- Placeholder components not yet built ------------------------------ */
+.course-todo {
+  border: 1px dashed var(--course-border);
+  border-radius: var(--course-radius);
+  padding: 1rem; margin-block: 1.5rem;
+  background: var(--course-surface);
+}
+.course-todo__label { font-weight: 700; color: var(--course-warn); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

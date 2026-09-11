@@ -1,0 +1,15 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": false,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "types": ["astro/client"],
+    "baseUrl": ".",
+    "paths": { "@components/*": ["src/components/*"], "@data/*": ["src/data/*"] }
+  },
+  "include": [".astro/types.d.ts", "**/*.ts", "**/*.tsx", "**/*.astro", "**/*.mjs"],
+  "exclude": ["dist", "dist-offline", "node_modules"]
+}

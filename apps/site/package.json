@@ -1,0 +1,31 @@
+{
+  "name": "@course/site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Static course site for Programming for the Internet (TU-Sofia), agentic web development.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "build:offline": "OFFLINE_BUILD=1 astro build && node scripts/make-offline.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/starlight": "^0.36.3",
+    "@xyflow/react": "^12.11.6",
+    "astro": "^5.18.2",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sharp": "^0.35.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3"
+  }
+}

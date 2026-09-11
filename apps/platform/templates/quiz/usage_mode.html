@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Как работи с агента{% endblock %}
+{% block content %}
+  <h1>Последен въпрос</h1>
+  <p class="muted">Как използва кодиращ агент за материала от тази лекция?</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="options">
+      {% for value, label in modes %}
+        <label class="option">
+          <input type="radio" name="mode" value="{{ value }}" required>
+          <span>{{ label }}</span>
+        </label>
+      {% endfor %}
+    </div>
+    <button type="submit">Изпрати</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,68 @@
+/* Mobile-first: one column, large tap targets, readable at arm's length. */
+:root {
+  --bg: #ffffff;
+  --fg: #14181f;
+  --muted: #5b6572;
+  --line: #d7dde5;
+  --accent: #1c56c4;
+  --accent-fg: #ffffff;
+  --ok: #157a42;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #11141a;
+    --fg: #eef2f7;
+    --muted: #9aa5b4;
+    --line: #2b323d;
+    --accent: #5a8dff;
+    --accent-fg: #0b0e13;
+    --ok: #46c07d;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.wrap { max-width: 34rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+h1 { font-size: 1.4rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.1rem; margin: 1.5rem 0 .5rem; }
+.muted { color: var(--muted); font-size: .95rem; }
+.progress { color: var(--muted); font-size: .9rem; margin-bottom: .5rem; }
+.stem { font-size: 1.15rem; font-weight: 600; margin: .5rem 0 1rem; }
+.options { display: grid; gap: .6rem; }
+.option {
+  display: flex; align-items: center; gap: .7rem;
+  border: 1px solid var(--line); border-radius: .7rem;
+  padding: .95rem 1rem; cursor: pointer; min-height: 3.25rem;
+}
+.option:has(input:checked) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.option input { width: 1.15rem; height: 1.15rem; flex: none; }
+button, .btn {
+  display: block; width: 100%; margin-top: 1.25rem;
+  background: var(--accent); color: var(--accent-fg);
+  border: 0; border-radius: .7rem; padding: 1rem;
+  font-size: 1.05rem; font-weight: 600; cursor: pointer;
+}
+button.secondary { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+input[type=text], input[type=email] {
+  width: 100%; padding: 1rem; font-size: 1.15rem;
+  border: 1px solid var(--line); border-radius: .7rem;
+  background: var(--bg); color: var(--fg);
+}
+input#join_code { text-transform: uppercase; letter-spacing: .3em; text-align: center; font-weight: 700; }
+.error { color: #b3261e; margin: .75rem 0; font-weight: 600; }
+.done { text-align: center; padding-top: 3rem; }
+.done .tick { font-size: 3rem; color: var(--ok); }
+
+/* Projector view: high contrast, large type, no per-student data anywhere. */
+.live { max-width: 60rem; }
+.live .bar-row { display: grid; grid-template-columns: 2rem 1fr 4rem; gap: .75rem; align-items: center; margin: .5rem 0; }
+.live .bar { background: color-mix(in srgb, var(--accent) 25%, transparent); border-radius: .4rem; height: 2.25rem; position: relative; }
+.live .bar > span { display: block; height: 100%; background: var(--accent); border-radius: .4rem; }
+.live .bar.correct > span { background: var(--ok); }
+.live .label { font-size: 1.05rem; }
+.live .count { text-align: right; font-variant-numeric: tabular-nums; }
+.code { font-size: 2.5rem; font-weight: 800; letter-spacing: .2em; }

@@ -1,0 +1,17 @@
+{% comment %}Aggregates only. No student identity is ever rendered here.{% endcomment %}
+{% for row in rows %}
+  <h2>{{ forloop.counter }}. {{ row.stem }}</h2>
+  <p class="muted">{{ row.measurement }} · отговорили: {{ row.answered }}</p>
+  {% for option in row.options %}
+    <div class="bar-row">
+      <span class="label">{{ forloop.counter0|stringformat:"s" }}</span>
+      <span class="bar{% if reveal and option.is_correct %} correct{% endif %}">
+        <span style="width: {{ option.percent }}%"></span>
+      </span>
+      <span class="count">{{ option.count }}</span>
+    </div>
+    <p class="muted">{{ option.text }}{% if reveal and option.is_correct %} ✓{% endif %}</p>
+  {% endfor %}
+{% empty %}
+  <p class="muted">Този тест няма въпроси.</p>
+{% endfor %}

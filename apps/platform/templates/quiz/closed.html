@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Тестът е затворен{% endblock %}
+{% block content %}
+  <div class="done">
+    <h1>Тестът е затворен</h1>
+    <p class="muted">Изчакай преподавателят да го отвори отново.</p>
+    <p><a href="{% url 'quiz:join' %}">Обратно към кода</a></p>
+  </div>
+{% endblock %}

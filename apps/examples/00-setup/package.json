@@ -1,0 +1,20 @@
+{
+  "name": "course-00-setup",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.12.0"
+  },
+  "scripts": {
+    "check": "node exercise/check.ts",
+    "check:live": "node exercise/check.ts --live",
+    "demo": "node demo/hello-world.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "typescript": "5.9.3"
+  }
+}

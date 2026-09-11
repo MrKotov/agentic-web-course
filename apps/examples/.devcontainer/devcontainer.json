@@ -1,0 +1,33 @@
+{
+  "name": "agentic-web-course",
+  "image": "mcr.microsoft.com/devcontainers/base:1.1.5-ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1.6.2": {
+      "version": "24.12.0",
+      "nodeGypDependencies": false
+    },
+    "ghcr.io/devcontainers/features/python:1.7.2": {
+      "version": "3.13.1",
+      "installTools": false
+    }
+  },
+  "containerEnv": {
+    "NODE_OPTIONS": "--disable-warning=ExperimentalWarning"
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "charliermarsh.ruff",
+        "ms-python.python"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "files.eol": "\n"
+      }
+    }
+  },
+  "remoteUser": "vscode"
+}

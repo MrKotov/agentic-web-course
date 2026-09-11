@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Присъедини се към тест{% endblock %}
+{% block content %}
+  <h1>Присъедини се към теста</h1>
+  <p class="muted">Въведи кода, показан на екрана в залата.</p>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <label for="join_code" class="muted">Код за присъединяване</label>
+    <input id="join_code" name="join_code" type="text" inputmode="latin" autocomplete="off"
+           autocapitalize="characters" maxlength="16" required autofocus>
+    <button type="submit">Напред</button>
+  </form>
+{% endblock %}

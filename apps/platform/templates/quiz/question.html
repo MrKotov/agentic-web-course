@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Въпрос {{ position }}{% endblock %}
+{% block content %}
+  <p class="progress">Въпрос {{ position }} от {{ total }}</p>
+  <p class="stem">{{ quiz_item.item.stem }}</p>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="options">
+      {% for index, text in options %}
+        <label class="option">
+          <input type="radio" name="chosen_option" value="{{ index }}" required>
+          <span>{{ text }}</span>
+        </label>
+      {% endfor %}
+    </div>
+    <button type="submit">{% if position == total %}Готово{% else %}Следващ въпрос{% endif %}</button>
+  </form>
+{% endblock %}

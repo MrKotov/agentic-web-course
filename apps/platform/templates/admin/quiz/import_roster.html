@@ -1,0 +1,10 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+  <h1>Импорт на списък — {{ cohort }}</h1>
+  <p>CSV с колони <code>name,email</code>. Повторен импорт обновява, не дублира.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Импортирай</button>
+  </form>
+{% endblock %}

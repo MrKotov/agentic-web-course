@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Проекция — {{ quiz }}{% endblock %}
+{% block content %}
+<div class="live">
+  <h1>{{ quiz }}{% if quiz.title %} — {{ quiz.title }}{% endif %}</h1>
+  {% if quiz.is_open %}
+    <p class="muted">Код за присъединяване</p>
+    <p class="code">{{ quiz.join_code }}</p>
+  {% else %}
+    <p class="muted">Тестът е затворен.</p>
+  {% endif %}
+
+  <form method="post" action="{% url 'quiz:toggle_open' quiz.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="secondary">
+      {% if quiz.is_open %}Затвори теста{% else %}Отвори теста{% endif %}
+    </button>
+  </form>
+
+  <button type="button" class="secondary"
+          hx-post="{% url 'quiz:toggle_reveal' quiz.pk %}"
+          hx-target="#aggregate" hx-swap="innerHTML">
+    Покажи / скрий верния отговор
+  </button>
+
+  <div id="aggregate"
+       hx-get="{% url 'quiz:live_fragment' quiz.pk %}"
+       hx-trigger="load, every 1s"
+       hx-swap="innerHTML">
+    <p class="muted">Зарежда…</p>
+  </div>
+</div>
+{% endblock %}

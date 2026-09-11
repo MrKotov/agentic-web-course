@@ -1,0 +1,98 @@
+{
+  "_comment": "Recorded on 2026-09-08. Ten runs of one prompt, temperature 0.7. No key or network is needed to replay this file.",
+  "model": "meta-llama/llama-3.3-70b-instruct:free",
+  "temperature": 0.7,
+  "recorded_at": "2026-09-08T11:04:00Z",
+  "prompt": [
+    {
+      "role": "system",
+      "content": "You extract structured data. Return JSON only."
+    },
+    {
+      "role": "user",
+      "content": "Извлечи данни за книгата от текста и върни JSON.\n\n„Властелинът на пръстените“ е роман от Дж. Р. Р. Толкин, издаден в три тома между 1954 и 1955 г. от Allen & Unwin в Лондон. Жанрово се определя като висше фентъзи и приключенски роман. Първото издание е 1178 страници."
+    }
+  ],
+  "runs": [
+    {
+      "index": 1,
+      "text": "{\"title\": \"Властелинът на пръстените\", \"author\": \"Дж. Р. Р. Толкин\", \"year\": 1954, \"genres\": [\"фентъзи\", \"приключенски\"]}",
+      "usage": {
+        "prompt_tokens": 121,
+        "completion_tokens": 40
+      }
+    },
+    {
+      "index": 2,
+      "text": "{\"title\": \"Властелинът на пръстените\", \"author\": \"Дж. Р. Р. Толкин\", \"year\": \"1954\", \"genres\": [\"фентъзи\", \"приключенски\"]}",
+      "usage": {
+        "prompt_tokens": 121,
+        "completion_tokens": 43
+      }
+    },
+    {
+      "index": 3,
+      "text": "{\"title\": \"Властелинът на пръстените\", \"author\": \"Дж. Р. Р. Толкин\", \"publication_year\": 1954, \"genres\": [\"фентъзи\", \"приключенски\"]}",
+      "usage": {
+        "prompt_tokens": 121,
+        "completion_tokens": 46
+      }
+    },
+    {
+      "index": 4,
+      "text": "{\"title\": \"Властелинът на пръстените\", \"author\": \"Дж. Р. Р. Толкин\", \"year\": 1954, \"genre\": \"фентъзи\"}",
+      "usage": {
+        "prompt_tokens": 121,
+        "completion_tokens": 49
+      }
+    },
+    {
+      "index": 5,
+      "text": "Ето извлечените данни:\n\n```json\n{\n  \"title\": \"Властелинът на пръстените\",\n  \"author\": \"Дж. Р. Р. Толкин\",\n  \"year\": 1954,\n  \"genres\": [\"фентъзи\", \"приключенски\"]\n}\n```\n\nГотово.",
+      "usage": {
+        "prompt_tokens": 121,
+        "completion_tokens": 52
+      }
+    },
+    {
+      "index": 6,
+      "text": "{\"book\": {\"title\": \"Властелинът на пръстените\", \"author\": \"Дж. Р. Р. Толкин\", \"year\": 1954, \"genres\": [\"фентъзи\", \"приключенски\"]}}",
+      "usage": {
+        "prompt_tokens": 121,
+        "completion_tokens": 55
+      }
+    },
+    {
+      "index": 7,
+      "text": "{\"title\": \"Властелинът на пръстените\", \"author\": \"Дж. Р. Р. Толкин\", \"year\": 1954, \"genres\": [\"фентъзи\", \"приключенски\"], \"summary\": \"Хобит носи пръстен до Мордор.\"}",
+      "usage": {
+        "prompt_tokens": 121,
+        "completion_tokens": 58
+      }
+    },
+    {
+      "index": 8,
+      "text": "{\"title\": \"Властелинът на пръстените\", \"author\": \"Дж. Р. Р. Толкин\", \"publisher\": \"Allen & Unwin\", \"genres\": [\"фентъзи\", \"приключенски\"]}",
+      "usage": {
+        "prompt_tokens": 121,
+        "completion_tokens": 61
+      }
+    },
+    {
+      "index": 9,
+      "text": "{\"title\": \"Властелинът на пръстените\", \"author\": \"Дж. Р. Р. Толкин\", \"year\": 1954, \"genres\": [\"висше фентъзи\", \"приключенски\"]}",
+      "usage": {
+        "prompt_tokens": 121,
+        "completion_tokens": 64
+      }
+    },
+    {
+      "index": 10,
+      "text": "{\"title\": \"Властелинът на пръстените\", \"author\": \"Дж. Р. Р. Толкин\", \"year\": 1954, \"genres\": [\"фентъзи\"], \"pages\": \"1178\", \"isbn\": null}",
+      "usage": {
+        "prompt_tokens": 121,
+        "completion_tokens": 40
+      }
+    }
+  ]
+}
