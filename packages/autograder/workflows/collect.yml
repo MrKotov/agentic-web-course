@@ -1,0 +1,51 @@
+# Instructor-side collector. Lives in instructor-controlled infrastructure ONLY — a private
+# repo the students never see or fork. This is where the shared secret and the read-only
+# GitHub token actually live; see README.md, "Secret handling and trust model".
+#
+# On a schedule, polls every repo in roster.json for a finished `autograder-result`
+# artifact and posts it to the platform, retrying on failure and uploading anything that
+# still could not be delivered as an artifact of THIS run (acceptance criterion 4: a failed
+# webhook post retries and never silently loses a submission).
+name: Autograder collect
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ORG/university-web-development
+          sparse-checkout: packages/autograder
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.13"
+
+      - name: Install the autograder
+        working-directory: packages/autograder
+        run: uv pip install --system -e .
+
+      - name: Collect and submit
+        env:
+          AUTOGRADER_PLATFORM_URL: ${{ secrets.AUTOGRADER_PLATFORM_URL }}
+          AUTOGRADER_SHARED_SECRET: ${{ secrets.AUTOGRADER_SHARED_SECRET }}
+          COLLECTOR_GITHUB_TOKEN: ${{ secrets.COLLECTOR_GITHUB_TOKEN }}
+        run: autograder collect --roster roster.json
+
+      - name: Upload anything that could not be delivered
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: autograder-undelivered
+          path: autograder-recovery/
+          if-no-files-found: ignore
+          retention-days: 90

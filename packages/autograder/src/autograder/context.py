@@ -58,7 +58,7 @@ def detect_commit(repo_path: Path) -> str:
 
 def _git(repo_path: Path, *args: str) -> str:
     try:
-        completed = subprocess.run(  # noqa: S603
+        completed = subprocess.run(
             ["git", "-C", str(repo_path), *args],
             capture_output=True,
             text=True,

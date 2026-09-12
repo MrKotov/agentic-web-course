@@ -25,7 +25,8 @@ PROTOCOL_VERSION = "2025-06-18"
 """The MCP revision the harness negotiates. Pinned: a semester must grade against one revision."""
 
 SUPPORTED_PROTOCOL_VERSIONS = frozenset({"2025-06-18", "2025-03-26", "2024-11-05"})
-"""Revisions the harness accepts back from a server, so a student SDK one minor behind still grades."""
+"""Revisions the harness accepts back from a server, so a student SDK one minor behind still
+grades."""
 
 MANIFEST_PATH = ".autograder/mcp-server.json"
 """Where a submission declares how to start its server. The only thing the student controls."""
@@ -82,7 +83,9 @@ def load_launch_manifest(repo_path: Path, manifest_path: str = MANIFEST_PATH) ->
         raise McpError(f'{manifest_path}: "cwd" must be a string.')
     cwd = (repo_path / cwd_value).resolve()
     if not cwd.is_dir():
-        raise McpError(f'{manifest_path}: "cwd" {cwd_value!r} is not a directory in the repository.')
+        raise McpError(
+            f'{manifest_path}: "cwd" {cwd_value!r} is not a directory in the repository.'
+        )
 
     env_value = raw.get("env", {})
     if not isinstance(env_value, dict) or not all(
@@ -125,7 +128,7 @@ class McpStdioClient:
     def start(self) -> None:
         env = {**os.environ, **self._launch.env, "PYTHONUNBUFFERED": "1"}
         try:
-            self._process = subprocess.Popen(  # noqa: S603
+            self._process = subprocess.Popen(
                 self._launch.command,
                 cwd=str(self._launch.cwd),
                 env=env,
@@ -217,7 +220,9 @@ class McpStdioClient:
         Returns `(result, error)`; exactly one is not None. Used for the unknown-tool check,
         where a protocol-level error is a correct answer and a crash is not.
         """
-        message = self._exchange(name_method="tools/call", params={"name": name, "arguments": arguments})
+        message = self._exchange(
+            name_method="tools/call", params={"name": name, "arguments": arguments}
+        )
         if "error" in message:
             error = message["error"]
             return None, error if isinstance(error, dict) else {"message": str(error)}

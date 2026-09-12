@@ -118,10 +118,12 @@ def _probe(context: SubmissionContext, contract: ToolContract) -> list[CheckResu
         results.add(
             "tools_list_schema_valid",
             not schema_problems,
-            "Every declared tool has a name, a description and an object inputSchema."
-            if not schema_problems
-            else "These tool declarations are not valid:\n"
-            + "\n".join(f"  - {p}" for p in schema_problems),
+            (
+                "Every declared tool has a name, a description and an object inputSchema."
+                if not schema_problems
+                else "These tool declarations are not valid:\n"
+                + "\n".join(f"  - {p}" for p in schema_problems)
+            ),
         )
 
         tool = _find_tool(tools, contract)
@@ -138,11 +140,13 @@ def _probe(context: SubmissionContext, contract: ToolContract) -> list[CheckResu
         results.add(
             "required_tool_declared",
             not missing_args,
-            f"{contract.name!r} is declared and requires {list(contract.required_arguments)}."
-            if not missing_args
-            else f"{contract.name!r} is declared, but its inputSchema does not require "
-            f"{missing_args}. Put them in `inputSchema.properties` and list them in "
-            "`inputSchema.required`.",
+            (
+                f"{contract.name!r} is declared and requires {list(contract.required_arguments)}."
+                if not missing_args
+                else f"{contract.name!r} is declared, but its inputSchema does not require "
+                f"{missing_args}. Put them in `inputSchema.properties` and list them in "
+                "`inputSchema.required`."
+            ),
         )
 
         results.add(*_invocation_outcome(client, contract))
@@ -258,7 +262,7 @@ def _schema_problems(tools: list[dict[str, Any]]) -> list[str]:
             problems.append(f"{label}: `inputSchema` must be a JSON Schema object")
             continue
         if schema.get("type") != "object":
-            problems.append(f"{label}: `inputSchema.type` must be \"object\"")
+            problems.append(f'{label}: `inputSchema.type` must be "object"')
         if not isinstance(schema.get("properties"), dict):
             problems.append(f"{label}: `inputSchema.properties` must be an object")
         required = schema.get("required", [])
@@ -299,7 +303,9 @@ def _text_of(result: dict[str, Any] | None) -> str | None:
     parts = [
         block["text"]
         for block in content
-        if isinstance(block, dict) and block.get("type") == "text" and isinstance(block.get("text"), str)
+        if isinstance(block, dict)
+        and block.get("type") == "text"
+        and isinstance(block.get("text"), str)
     ]
     return "\n".join(parts) if parts else None
 

@@ -92,13 +92,15 @@ def _parse_fields(body: str) -> dict[str, str]:
         stripped = line.strip().lstrip("-*").strip()
         for field in REQUIRED_FIELDS:
             prefix = f"{field.lower()}:"
-            if stripped.lower().startswith(prefix) or stripped.lower().startswith(f"**{field.lower()}**:"):
+            if stripped.lower().startswith(prefix) or stripped.lower().startswith(
+                f"**{field.lower()}**:"
+            ):
                 value = stripped.split(":", 1)[1]
                 fields[field.lower()] = value
     return fields
 
 
-def _stub(name: str, reason: str) -> "object":
+def _stub(name: str, reason: str) -> object:
     def check(_: SubmissionContext) -> CheckResult:
         return CheckResult(name, False, reason)
 

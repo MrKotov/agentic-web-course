@@ -82,7 +82,9 @@ def file_non_trivial(
                 False,
                 f"{path.name} does not mention the required sections: {missing}. {hint}",
             )
-        return CheckResult(name, True, f"{path.name}: {words} words, all required sections present.")
+        return CheckResult(
+            name, True, f"{path.name}: {words} words, all required sections present."
+        )
 
     return named(check, name)
 
@@ -114,7 +116,7 @@ def command_succeeds(
             )
         workdir = context.path(cwd)
         try:
-            completed = subprocess.run(  # noqa: S603
+            completed = subprocess.run(
                 argv,
                 cwd=str(workdir),
                 capture_output=True,
@@ -157,7 +159,9 @@ def url_returns_200(name: str, *, path: str = "/", timeout: int = 20, hint: str)
         try:
             response = httpx.get(url, timeout=timeout, follow_redirects=True)
         except httpx.HTTPError as exc:
-            return CheckResult(name, False, f"GET {url} failed: {type(exc).__name__}: {exc}. {hint}")
+            return CheckResult(
+                name, False, f"GET {url} failed: {type(exc).__name__}: {exc}. {hint}"
+            )
         if response.status_code == 200:
             return CheckResult(name, True, f"GET {url} returned 200.")
         return CheckResult(
@@ -215,7 +219,9 @@ def secret_scan(name: str, *, scan_history_commits: int = 200) -> Check:
                 "Credentials found in the repository. Rotate them, then remove them from the "
                 f"working tree and from history:\n{shown}{more}",
             )
-        return CheckResult(name, True, "No credential patterns in the working tree or recent history.")
+        return CheckResult(
+            name, True, "No credential patterns in the working tree or recent history."
+        )
 
     return named(check, name)
 
@@ -243,7 +249,7 @@ def _scan_history(repo_path: Path, max_commits: int) -> list[str]:
     if not (repo_path / ".git").exists():
         return []
     try:
-        completed = subprocess.run(  # noqa: S603
+        completed = subprocess.run(
             ["git", "-C", str(repo_path), "log", "-p", "--no-color", f"-{max_commits}", "--", "."],
             capture_output=True,
             text=True,
@@ -292,7 +298,9 @@ def prompt_log_covers_commits(
     def check(context: SubmissionContext) -> CheckResult:
         texts = _collect_prompt_log(context, candidates)
         if not texts:
-            return CheckResult(name, False, f"No prompt log found at any of {list(candidates)}. {hint}")
+            return CheckResult(
+                name, False, f"No prompt log found at any of {list(candidates)}. {hint}"
+            )
         blob = "\n".join(texts)
         log_dates = sorted({_to_date(m) for m in _DATE.finditer(blob)} - {None})
         entries = blob.count("\n## ") + blob.count("\n### ")
@@ -353,7 +361,7 @@ def _commit_date_range(repo_path: Path) -> tuple[date, date] | None:
     if not (repo_path / ".git").exists():
         return None
     try:
-        completed = subprocess.run(  # noqa: S603
+        completed = subprocess.run(
             ["git", "-C", str(repo_path), "log", "--format=%cs"],
             capture_output=True,
             text=True,

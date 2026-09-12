@@ -1,0 +1,68 @@
+# Copy this into an exercise template's `.github/workflows/autograder.yml`, then set
+# AUTOGRADER_EXERCISE below. This is the file every student's fork actually contains — read
+# it and confirm for yourself that it has no secret in it (acceptance criterion 5).
+#
+# This does the same thing as workflows/reusable-check.yml but inline, so it works today
+# without waiting on that file being published somewhere `uses:` can resolve. Once it is
+# published, replace the two steps below with:
+#
+#   jobs:
+#     check:
+#       uses: ORG/university-web-development/.github/workflows/reusable-check.yml@main
+#       with:
+#         exercise: "01-mcp-server"
+#
+# See README.md, "How a template wires up the workflow".
+name: Autograder check
+
+on:
+  push:
+    branches: ["**"]
+
+permissions:
+  contents: read
+
+env:
+  AUTOGRADER_EXERCISE: "01-mcp-server" # change per exercise template
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.13"
+
+      - name: Install the autograder
+        run: |
+          uv pip install --system \
+            "autograder @ git+https://github.com/ORG/university-web-development@main#subdirectory=packages/autograder"
+
+      - name: Run the exercise checks
+        id: run
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          # DEPLOYED_URL: set this for the exercise-4 template, to a repository variable
+          # (Settings > Secrets and variables > Actions > Variables), NOT a secret — it is
+          # a public URL, not a credential.
+        run: autograder run --exercise "$AUTOGRADER_EXERCISE" --out result.json
+        continue-on-error: true
+
+      - name: Show the result in the Actions log
+        if: always()
+        run: cat result.json
+
+      - name: Upload result (always, even on failure)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: autograder-result
+          path: result.json
+          retention-days: 90
+
+      - name: Fail the job if any check failed
+        if: steps.run.outcome == 'failure'
+        run: exit 1

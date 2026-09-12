@@ -65,13 +65,15 @@ def safe_run(check: Check, context: SubmissionContext) -> list[CheckResult]:
     """
     try:
         outcome = check(context)
-    except Exception as exc:  # noqa: BLE001 - deliberate: a check crash is a failed check
+    except Exception as exc:
         detail = (
             f"The check crashed: {type(exc).__name__}: {exc}. "
             "This usually means the submission behaved in a way the harness did not expect. "
             "If your repository looks correct, report this to the instructor."
         )
-        return [CheckResult(name=name, passed=False, detail=detail) for name in declared_names(check)]
+        return [
+            CheckResult(name=name, passed=False, detail=detail) for name in declared_names(check)
+        ]
     if isinstance(outcome, CheckResult):
         return [outcome]
     return list(outcome)

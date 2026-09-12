@@ -1,0 +1,70 @@
+# Reusable workflow: runs the conformance suite for one exercise and uploads the result as
+# an artifact. Called via `workflow_call` — see README.md, "How a template wires up the
+# workflow" for the caller snippet and where this file needs to live to be `uses:`-able.
+#
+# Deliberately carries NO secrets and needs NONE: it never talks to the platform. See
+# README.md, "Secret handling and trust model" for why, and `templates/exercise-workflow.yml`
+# for the copy-paste version a template repo can use today without waiting on that file to
+# be published anywhere.
+name: Autograder check (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      exercise:
+        description: 'Exercise id, e.g. "01-mcp-server" (see README.md for the full list).'
+        required: true
+        type: string
+      deployed-url:
+        description: "Exercise 4 only: the URL the deployment checks probe."
+        required: false
+        type: string
+        default: ""
+      autograder-ref:
+        description: "Git ref of university-web-development to install packages/autograder from."
+        required: false
+        type: string
+        default: "main"
+
+# No `secrets:` block: this workflow has nothing to authenticate with, on purpose.
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.13"
+
+      - name: Install the autograder
+        run: |
+          uv pip install --system \
+            "autograder @ git+https://github.com/ORG/university-web-development@${{ inputs.autograder-ref }}#subdirectory=packages/autograder"
+        # Replace ORG once this monorepo has a public home; see README.md for the interim
+        # copy-paste alternative that does not depend on this resolving today.
+
+      - name: Run the exercise checks
+        id: run
+        env:
+          DEPLOYED_URL: ${{ inputs.deployed-url }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: autograder run --exercise "${{ inputs.exercise }}" --out result.json
+        continue-on-error: true
+
+      - name: Upload result (always, even on failure)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: autograder-result
+          path: result.json
+          retention-days: 90
+
+      - name: Fail the job if any check failed
+        if: steps.run.outcome == 'failure'
+        run: exit 1
