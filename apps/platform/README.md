@@ -51,7 +51,7 @@ never committed (see the repo's root `.gitignore`).
 | `DJANGO_CSRF_TRUSTED_ORIGINS` | Comma-separated `https://` origins Django trusts for CSRF (needed once the admin and student forms are served over a real domain). | empty |
 | `DJANGO_SECURE_SSL_REDIRECT` | Redirect http to https when `DJANGO_DEBUG=0`. Set to `0` only behind a TLS-terminating proxy that already redirects. | `1` |
 | `DATABASE_URL` | Unset locally (SQLite at `apps/platform/db.sqlite3`, no services needed). A Postgres URL (`postgres://user:pass@host:5432/platform`) for staging and production. | unset |
-| `AUTOGRADER_SHARED_SECRET` | Shared secret the autograder's GitHub Actions workflow presents in the `X-Autograder-Secret` header. Generate with `uv run python -c "import secrets; print(secrets.token_urlsafe(32))"` and store it as a repository secret in each exercise template — never in this repo. | empty (ingest endpoint rejects everything until set) |
+| `AUTOGRADER_SHARED_SECRET` | Shared secret the autograder's collector presents in the `X-Autograder-Secret` header. Generate with `uv run python -c "import secrets; print(secrets.token_urlsafe(32))"`. **Never** store it as a repository secret in a student's exercise template — a student-editable workflow can always `echo` a secret it has access to. It lives only in the instructor-owned collector workflow (`packages/autograder/workflows/collect.yml`), which pulls each student's result artifact and delivers it here; student workflows run with no secret at all. See `packages/autograder/README.md` for the full split. | empty (ingest endpoint rejects everything until set) |
 
 ### A note on SQLite and concurrency
 
