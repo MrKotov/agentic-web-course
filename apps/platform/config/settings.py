@@ -73,6 +73,16 @@ DATABASES = {
     )
 }
 
+# SQLite serialises writers; a lecture hall submitting 40 answers at once means several
+# requests contend for the same file. A longer busy-timeout makes them queue and wait
+# instead of raising "database is locked" (see test_ac2_forty_concurrent_phones...).
+if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
+    DATABASES["default"].setdefault("OPTIONS", {})
+    DATABASES["default"]["OPTIONS"].setdefault("timeout", 20)
+    # WAL lets readers and the live-aggregate poll proceed while a writer commits an
+    # answer, instead of every connection contending for one lock on the whole file.
+    DATABASES["default"]["OPTIONS"].setdefault("init_command", "PRAGMA journal_mode=WAL;")
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -91,6 +101,11 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Signed, cookie-stored sessions: the only session data is a student pk and a small map of
+# per-question timestamps, nothing worth a server-side store. This also means a lecture
+# hall answering in parallel never contends on a shared `django_session` row, which is the
+# one table every request would otherwise write to regardless of which quiz it is for.
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 180  # students are remembered for a semester
 SESSION_COOKIE_SAMESITE = "Lax"
 

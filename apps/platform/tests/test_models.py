@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
+
 import pytest
 from django.utils import timezone
-from datetime import timedelta
 
 from quiz.models import Measurement, Phase, Quiz, QuizItem
 

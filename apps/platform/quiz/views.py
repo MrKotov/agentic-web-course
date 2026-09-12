@@ -16,12 +16,12 @@ from .models import (
     AgentUsageMode,
     Consent,
     Quiz,
-    QuizItem,
     Response,
     Student,
     UsageMode,
 )
 from .services import aggregate_for_quiz, export_responses_csv
+from .sqlite_resilience import serialize_on_sqlite
 
 SESSION_STUDENT_KEY = "student_id"
 SESSION_QUESTION_SHOWN_AT = "question_shown_at"
@@ -56,6 +56,7 @@ def join(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET", "POST"])
+@serialize_on_sqlite
 def identify(request: HttpRequest, quiz_id: int) -> HttpResponse:
     """Identify by university email once; the session remembers the student afterwards."""
     quiz = get_object_or_404(Quiz, pk=quiz_id)
@@ -81,6 +82,7 @@ def identify(request: HttpRequest, quiz_id: int) -> HttpResponse:
 
 
 @require_http_methods(["GET", "POST"])
+@serialize_on_sqlite
 def consent(request: HttpRequest, quiz_id: int) -> HttpResponse:
     """Ask for research consent once. Either answer leads straight into the quiz."""
     quiz = get_object_or_404(Quiz, pk=quiz_id)
@@ -102,6 +104,7 @@ def consent(request: HttpRequest, quiz_id: int) -> HttpResponse:
 
 
 @require_http_methods(["GET", "POST"])
+@serialize_on_sqlite
 def question(request: HttpRequest, quiz_id: int, position: int) -> HttpResponse:
     """Show one question and record the answer with its latency."""
     quiz = get_object_or_404(Quiz, pk=quiz_id)
@@ -172,6 +175,7 @@ def _latency_ms(shown_at: float | None) -> int:
 
 
 @require_http_methods(["GET", "POST"])
+@serialize_on_sqlite
 def usage_mode(request: HttpRequest, quiz_id: int) -> HttpResponse:
     """The one self-report question per lecture: how the agent was used."""
     quiz = get_object_or_404(Quiz, pk=quiz_id)

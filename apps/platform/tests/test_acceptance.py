@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import io
+import re
 from concurrent.futures import ThreadPoolExecutor
 
 import pytest
@@ -130,8 +131,15 @@ def test_student_never_sees_a_score(client: Client, quiz, student) -> None:
     _take_quiz(client, quiz, student.email)
     body = client.get(reverse("quiz:done", args=[quiz.pk])).content.decode()
     assert "Отговорите са записани" in body
-    for forbidden in ("верни", "точки", "резултат", "score"):
-        assert forbidden not in body.lower()
+    # "резултат" is allowed to appear once, in the sentence that explains scores are
+    # withheld by design (transparency about the study, not a leak of the score itself).
+    # What must never appear is anything that looks like an actual tally: a fraction like
+    # "3/5", a percentage, or the words "верни"/"точки"/"score" used to report a count.
+    lowered = body.lower()
+    assert not re.search(r"\d+\s*/\s*\d+", lowered)
+    assert not re.search(r"\d+\s*%", lowered)
+    for forbidden in ("верни", "точки", "score"):
+        assert forbidden not in lowered
 
 
 # --- AC3: live view is aggregate-only and reflects a submission immediately -------------
