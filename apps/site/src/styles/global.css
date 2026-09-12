@@ -1,0 +1,183 @@
+/* Tailwind CSS + shadcn/ui theme, bridged to Starlight's own CSS-variable system.
+   Single source of colour truth: docs/brand.md at the repo root (do not hand-edit a
+   value here without re-sampling the source and updating brand.md first).
+
+   Layer order follows Starlight's official Tailwind pairing
+   (https://starlight.astro.build/guides/css-and-tailwind/) so Tailwind's reset and
+   Starlight's own component styles don't fight over specificity. */
+@layer base, starlight, theme, components, utilities;
+
+@import '@astrojs/starlight-tailwind';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+@import 'tw-animate-css';
+
+/* shadcn components (Button, Badge, ...) use Tailwind's `dark:` variant. Starlight
+   toggles dark mode via `data-theme="dark"` on <html>, not a `.dark` class — point
+   the variant at Starlight's own mechanism instead of maintaining two systems. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---- 1. Brand tokens (docs/brand.md) ------------------------------------ */
+:root {
+  --tu-navy: #1d3b76;
+  --tu-navy-dark: #14285c;
+  --tu-navy-light: #2c4f96;
+  --tu-blue: #1447e6; /* single accent — reserve for ONE primary action per view */
+  --tu-blue-tint: #f5f7ff;
+
+  --ink: #101828;
+  --ink-muted: #4b5565;
+  --paper: #ffffff;
+  --paper-sunken: #f5f7ff;
+  --paper-raised-dark: #16204a;
+  --border-c: #dfe4ee;
+
+  --ink-dark: #e8ecf5;
+  --ink-muted-dark: #a3adc2;
+  --paper-dark: #0b1224;
+  --paper-sunken-dark: #121a33;
+  --border-dark: #263257;
+
+  --success: #176e45;
+  --success-tint: #e6f4ec;
+  --danger: #c4293a;
+  --danger-tint: #fbeaec;
+  --warning: #a15c00;
+  --warning-tint: #fbf0dc;
+
+  --success-dark: #4fd38f;
+  --success-tint-dark: rgba(26, 127, 79, 0.22);
+  --danger-dark: #ff8a80;
+  --danger-tint-dark: rgba(196, 41, 58, 0.22);
+  --warning-dark: #f0c060;
+  --warning-tint-dark: rgba(161, 92, 0, 0.22);
+
+  /* White-on-navy is brand.md's one verified pairing (rule 3). */
+  --tu-on-brand: #ffffff;
+}
+
+/* ---- 2. shadcn's own variable names, mapped onto the brand tokens above --- */
+/* Rule 2: navy carries the identity, so shadcn's broad-use `--primary` is navy, not
+   blue. Rule 1: `--tu-blue` stays scarce — it is only ever applied explicitly, via
+   the `cta` button/badge variant, to the one primary action per view. */
+:root {
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+
+  --primary: var(--tu-navy);
+  --primary-foreground: var(--tu-on-brand);
+  --secondary: var(--paper-sunken);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-sunken);
+  --muted-foreground: var(--ink-muted);
+  --accent: var(--paper-sunken);
+  --accent-foreground: var(--ink);
+
+  --cta: var(--tu-blue);
+  --cta-foreground: var(--tu-on-brand);
+
+  --destructive: var(--danger);
+  --destructive-foreground: var(--tu-on-brand);
+  --success-c: var(--success);
+  --success-c-foreground: var(--tu-on-brand);
+  --warning-c: var(--warning);
+  --warning-c-foreground: var(--tu-on-brand);
+
+  --border: var(--border-c);
+  --input: var(--border-c);
+  --ring: var(--tu-navy);
+  --radius: 0.65rem;
+}
+
+:root[data-theme='dark'] {
+  --background: var(--paper-dark);
+  --foreground: var(--ink-dark);
+  --card: var(--paper-raised-dark);
+  --card-foreground: var(--ink-dark);
+  --popover: var(--paper-raised-dark);
+  --popover-foreground: var(--ink-dark);
+
+  /* --tu-navy-light fails AA on the near-black page background (2.4:1) — dark mode
+     gets its own lighter tint derived from the same hue instead of an inversion of
+     the light-mode value (brand.md rule 3). */
+  --primary: #9fb6ef; /* contrast vs --paper-dark: 9.2:1 */
+  --primary-foreground: #0b1224;
+  --secondary: var(--paper-sunken-dark);
+  --secondary-foreground: var(--ink-dark);
+  --muted: var(--paper-sunken-dark);
+  --muted-foreground: var(--ink-muted-dark);
+  --accent: var(--paper-sunken-dark);
+  --accent-foreground: var(--ink-dark);
+
+  --cta: var(--tu-blue);
+  --cta-foreground: var(--tu-on-brand);
+
+  --destructive: var(--danger-dark);
+  --destructive-foreground: #2a0a0a;
+  --success-c: var(--success-dark);
+  --success-c-foreground: #062513;
+  --warning-c: var(--warning-dark);
+  --warning-c-foreground: #2b1a00;
+
+  --border: var(--border-dark);
+  --input: var(--border-dark);
+  --ring: #9fb6ef;
+}
+
+/* ---- 3. Tailwind theme — expose the variables above as utility colours ---- */
+@theme inline {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: var(--font-sans);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-cta: var(--cta);
+  --color-cta-foreground: var(--cta-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success-c);
+  --color-success-foreground: var(--success-c-foreground);
+  --color-warning: var(--warning-c);
+  --color-warning-foreground: var(--warning-c-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
