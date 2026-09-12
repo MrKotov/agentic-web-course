@@ -16,20 +16,34 @@ hero:
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import FloatingCards from '../../components/home/FloatingCards.astro';
 
-<CardGrid>
-  <Card title="Лекции" icon="rocket">
-    Десет лекции, агентно от самото начало. [Започнете от лекция 1](/lectures/01-models-and-agents/).
-  </Card>
-  <Card title="Упражнения" icon="pencil">
-    Пет упражнения, задължителни за допускане по текущото оценяване.
-    [Упражнение 1: MCP сървър](/exercises/01-mcp-server/).
-  </Card>
-  <Card title="Справочник" icon="open-book">
-    [Конспект за изпита](/reference/conspectus/) и
-    [инструменти и ключове](/reference/tooling/).
-  </Card>
-</CardGrid>
+{/*
+  Concept A's floating product-fragment cards (tool-call JSON, schema-diff conflict,
+  agent-loop step, MCP handshake) scattered around the lectures/exercises overview —
+  the mixed-concept homepage decision from the visual review. `relative` on the
+  wrapper plus `z-10` on the CardGrid keeps the real, clickable content above the
+  purely decorative (`pointer-events: none`) floating layer; see
+  src/components/home/FloatingCards.astro for why it disappears below 768px.
+*/}
+<div class="relative overflow-x-clip">
+  <FloatingCards />
+  <div class="relative z-10">
+    <CardGrid>
+      <Card title="Лекции" icon="rocket">
+        Десет лекции, агентно от самото начало. [Започнете от лекция 1](/lectures/01-models-and-agents/).
+      </Card>
+      <Card title="Упражнения" icon="pencil">
+        Пет упражнения, задължителни за допускане по текущото оценяване.
+        [Упражнение 1: MCP сървър](/exercises/01-mcp-server/).
+      </Card>
+      <Card title="Справочник" icon="open-book">
+        [Конспект за изпита](/reference/conspectus/) и
+        [инструменти и ключове](/reference/tooling/).
+      </Card>
+    </CardGrid>
+  </div>
+</div>
 
 Сайтът е статичен, публичен, без вход и не събира никакви данни за посетителя. Всеки
 интерактивен компонент работи и без ключ, и без мрежа, в записан режим — за да оцелее

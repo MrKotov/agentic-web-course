@@ -1,6 +1,6 @@
 /* Tailwind CSS + shadcn/ui theme, bridged to Starlight's own CSS-variable system.
    Single source of colour truth: docs/brand.md at the repo root (do not hand-edit a
-   value here without re-sampling the source and updating brand.md first).
+   value here without re-checking it against brand.md first).
 
    Layer order follows Starlight's official Tailwind pairing
    (https://starlight.astro.build/guides/css-and-tailwind/) so Tailwind's reset and
@@ -18,25 +18,31 @@
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 /* ---- 1. Brand tokens (docs/brand.md) ------------------------------------ */
+/* White/blue pass — a plain white page with one confident blue accent, not a second
+   navy anchor. See docs/brand.md's "History" section for why the earlier
+   TU-Sofia-navy pass was rejected and must not be reintroduced. */
 :root {
-  --tu-navy: #1d3b76;
-  --tu-navy-dark: #14285c;
-  --tu-navy-light: #2c4f96;
-  --tu-blue: #1447e6; /* single accent — reserve for ONE primary action per view */
-  --tu-blue-tint: #f5f7ff;
+  --brand-blue: #2b62e6; /* the one accent — reserve for ONE primary action/view */
+  --brand-blue-dark: #1f4bc4; /* hover/active state on --brand-blue */
+  --brand-blue-tint: #eaf0ff; /* soft background shapes, badges, subtle fills */
+  /* Soft radial glow derived from --brand-blue for hero/background art (brand.md
+     rule 3: imagery stays in-palette — white ground, blue linework, tint fills). Not
+     an independent hue, just an alpha-mixed version of the one accent. */
+  --brand-blue-glow: rgb(43 98 230 / 16%);
 
-  --ink: #101828;
-  --ink-muted: #4b5565;
-  --paper: #ffffff;
-  --paper-sunken: #f5f7ff;
-  --paper-raised-dark: #16204a;
-  --border-c: #dfe4ee;
+  --ink: #0f172a; /* body text, light mode */
+  --ink-muted: #5b6478;
+  --paper: #ffffff; /* page background, light mode — this IS the brand now */
+  --paper-sunken: #f4f7fd; /* card/section backgrounds one step off white */
+  --border-c: #e3e8f2;
 
   --ink-dark: #e8ecf5;
-  --ink-muted-dark: #a3adc2;
-  --paper-dark: #0b1224;
-  --paper-sunken-dark: #121a33;
-  --border-dark: #263257;
+  --ink-muted-dark: #99a2b8;
+  --paper-dark: #0b0f1a;
+  --paper-sunken-dark: #131826;
+  --border-dark: #232b3d;
+  --brand-blue-dark-mode: #6f97f2; /* lightened so it clears AA on --paper-dark */
+  --brand-blue-glow-dark: rgb(111 151 242 / 18%);
 
   --success: #176e45;
   --success-tint: #e6f4ec;
@@ -46,20 +52,22 @@
   --warning-tint: #fbf0dc;
 
   --success-dark: #4fd38f;
-  --success-tint-dark: rgba(26, 127, 79, 0.22);
+  --success-tint-dark: rgba(23, 110, 69, 0.22);
   --danger-dark: #ff8a80;
   --danger-tint-dark: rgba(196, 41, 58, 0.22);
   --warning-dark: #f0c060;
   --warning-tint-dark: rgba(161, 92, 0, 0.22);
 
-  /* White-on-navy is brand.md's one verified pairing (rule 3). */
-  --tu-on-brand: #ffffff;
+  /* White-on-blue is the one verified pairing for the scarce accent (brand.md rule
+     4: --brand-blue on --paper is verified; this is the inverse text-on-fill use). */
+  --on-brand: #ffffff;
 }
 
 /* ---- 2. shadcn's own variable names, mapped onto the brand tokens above --- */
-/* Rule 2: navy carries the identity, so shadcn's broad-use `--primary` is navy, not
-   blue. Rule 1: `--tu-blue` stays scarce — it is only ever applied explicitly, via
-   the `cta` button/badge variant, to the one primary action per view. */
+/* Rule 2 (brand.md): white carries the identity, not a brand colour — shadcn's
+   broad-use `--primary` (the default Button/Badge fill) is therefore near-black ink,
+   not blue. Rule 1: `--brand-blue` stays scarce — it is only ever applied
+   explicitly, via the `cta` button/badge variant, to the one primary action/view. */
 :root {
   --background: var(--paper);
   --foreground: var(--ink);
@@ -68,8 +76,8 @@
   --popover: var(--paper);
   --popover-foreground: var(--ink);
 
-  --primary: var(--tu-navy);
-  --primary-foreground: var(--tu-on-brand);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
   --secondary: var(--paper-sunken);
   --secondary-foreground: var(--ink);
   --muted: var(--paper-sunken);
@@ -77,35 +85,36 @@
   --accent: var(--paper-sunken);
   --accent-foreground: var(--ink);
 
-  --cta: var(--tu-blue);
-  --cta-foreground: var(--tu-on-brand);
+  --cta: var(--brand-blue);
+  --cta-foreground: var(--on-brand);
 
   --destructive: var(--danger);
-  --destructive-foreground: var(--tu-on-brand);
+  --destructive-foreground: var(--on-brand);
   --success-c: var(--success);
-  --success-c-foreground: var(--tu-on-brand);
+  --success-c-foreground: var(--on-brand);
   --warning-c: var(--warning);
-  --warning-c-foreground: var(--tu-on-brand);
+  --warning-c-foreground: var(--on-brand);
 
   --border: var(--border-c);
   --input: var(--border-c);
-  --ring: var(--tu-navy);
+  --ring: var(--brand-blue);
   --radius: 0.65rem;
+
+  /* Semantic alias so hero/decorative art doesn't need a light/dark selector of its
+     own — see --brand-blue-glow-dark below for why this isn't a literal inversion. */
+  --hero-glow: var(--brand-blue-glow);
 }
 
 :root[data-theme='dark'] {
   --background: var(--paper-dark);
   --foreground: var(--ink-dark);
-  --card: var(--paper-raised-dark);
+  --card: var(--paper-sunken-dark);
   --card-foreground: var(--ink-dark);
-  --popover: var(--paper-raised-dark);
+  --popover: var(--paper-sunken-dark);
   --popover-foreground: var(--ink-dark);
 
-  /* --tu-navy-light fails AA on the near-black page background (2.4:1) — dark mode
-     gets its own lighter tint derived from the same hue instead of an inversion of
-     the light-mode value (brand.md rule 3). */
-  --primary: #9fb6ef; /* contrast vs --paper-dark: 9.2:1 */
-  --primary-foreground: #0b1224;
+  --primary: var(--ink-dark);
+  --primary-foreground: var(--paper-dark);
   --secondary: var(--paper-sunken-dark);
   --secondary-foreground: var(--ink-dark);
   --muted: var(--paper-sunken-dark);
@@ -113,8 +122,8 @@
   --accent: var(--paper-sunken-dark);
   --accent-foreground: var(--ink-dark);
 
-  --cta: var(--tu-blue);
-  --cta-foreground: var(--tu-on-brand);
+  --cta: var(--brand-blue-dark-mode);
+  --cta-foreground: #0b1224; /* dark ink on the lightened dark-mode blue, not white */
 
   --destructive: var(--danger-dark);
   --destructive-foreground: #2a0a0a;
@@ -125,7 +134,9 @@
 
   --border: var(--border-dark);
   --input: var(--border-dark);
-  --ring: #9fb6ef;
+  --ring: var(--brand-blue-dark-mode);
+
+  --hero-glow: var(--brand-blue-glow-dark);
 }
 
 /* ---- 3. Tailwind theme — expose the variables above as utility colours ---- */

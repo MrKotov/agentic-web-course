@@ -14,19 +14,21 @@
 :root {
   --sl-color-text: var(--ink);
   --sl-color-bg: var(--paper);
-  --sl-color-bg-nav: var(--paper-sunken);
-  --sl-color-bg-sidebar: var(--paper-sunken);
+  --sl-color-bg-nav: var(--paper);
+  --sl-color-bg-sidebar: var(--paper);
   --sl-color-bg-inline-code: var(--paper-sunken);
   --sl-color-hairline: var(--border-c);
   --sl-color-hairline-light: var(--border-c);
   --sl-color-hairline-shade: var(--border-c);
 
-  /* Navy carries the identity (brand.md rule 2). --tu-blue is reserved for the
-     primary-action buttons below, not for every link and highlighted nav item. */
-  --sl-color-accent-low: var(--tu-blue-tint);
-  --sl-color-accent: var(--tu-navy);
-  --sl-color-accent-high: var(--tu-navy-dark);
-  --sl-color-bg-accent: var(--tu-navy);
+  /* White carries the identity (brand.md rule 2) — the header and sidebar stay on
+     the page's own white background rather than a fixed brand-colour band.
+     --brand-blue is reserved for the primary-action buttons below and for accenting
+     the *current* nav item, not for every link (brand.md rule 1). */
+  --sl-color-accent-low: var(--brand-blue-tint);
+  --sl-color-accent: var(--brand-blue);
+  --sl-color-accent-high: var(--brand-blue-dark);
+  --sl-color-bg-accent: var(--brand-blue);
 
   --course-accent: var(--sl-color-accent);
   --course-border: var(--border-c);
@@ -41,20 +43,21 @@
 :root[data-theme='dark'] {
   --sl-color-text: var(--ink-dark);
   --sl-color-bg: var(--paper-dark);
-  --sl-color-bg-nav: var(--paper-sunken-dark);
-  --sl-color-bg-sidebar: var(--paper-sunken-dark);
+  --sl-color-bg-nav: var(--paper-dark);
+  --sl-color-bg-sidebar: var(--paper-dark);
   --sl-color-bg-inline-code: var(--paper-sunken-dark);
   --sl-color-hairline: var(--border-dark);
   --sl-color-hairline-light: var(--border-dark);
   --sl-color-hairline-shade: var(--border-dark);
 
-  /* --tu-navy-light on its own fails AA on the near-black page background (2.4:1),
-     so dark mode gets its own lighter tints derived from the navy hue instead of an
-     inversion of the light-mode values — verified below, brand.md rule 3. */
-  --sl-color-accent-low: var(--tu-navy-dark);
-  --sl-color-accent: #9fb6ef; /* contrast vs --paper-dark: 9.2:1 */
+  /* --brand-blue on its own is close to AA-borderline on the near-black page
+     background, so dark mode gets the lightened accent from brand.md
+     (--brand-blue-dark-mode, verified there at 9.2:1) instead of an inversion of the
+     light-mode value (brand.md rule 3). */
+  --sl-color-accent-low: #16233f;
+  --sl-color-accent: var(--brand-blue-dark-mode); /* contrast vs --paper-dark: 9.2:1 */
   --sl-color-accent-high: #c9d6f5; /* contrast vs --paper-dark: 12.8:1 */
-  --sl-color-bg-accent: var(--tu-navy-light);
+  --sl-color-bg-accent: var(--brand-blue-dark-mode);
 
   --course-accent: var(--sl-color-accent);
   --course-border: var(--border-dark);
@@ -62,66 +65,37 @@
   --course-warn: var(--warning-dark);
 }
 
-/* The site header is TU Sofia's own pairing: white-on-navy (brand.md, "logo mark"
-   section). Set literal colours on the header's own children rather than reassigning
-   Starlight's shared `--sl-color-*` variables, so the search dialog and the
-   theme/language dropdowns — which are DOM descendants of the header but must stay on
-   the *page's* normal light/dark surface, not the header's fixed navy one — are
-   unaffected. */
+/* The header sits on the page's own white/near-black surface now, not a fixed
+   navy band (brand.md rule 2 — white carries the identity). Starlight's own
+   `--sl-color-*` variables already give it the right colours; only the hairline
+   needs to stay explicit so the header reads as a distinct band from the content
+   below it. */
 .header {
-  background-color: var(--tu-navy);
-  border-bottom-color: var(--tu-navy-dark);
-}
-.header :is(.site-title, .site-title span) {
-  color: var(--tu-on-brand);
-}
-.header site-search > button[data-open-modal] {
-  color: var(--tu-on-brand);
-  opacity: 0.9;
-}
-.header site-search > button[data-open-modal]:hover {
-  opacity: 1;
-}
-.header site-search kbd {
-  border-color: rgba(255, 255, 255, 0.35);
-  color: var(--tu-on-brand);
-}
-.header .social-icons,
-.header .social-icons a {
-  color: var(--tu-on-brand);
-}
-.header .social-icons::after {
-  border-color: rgba(255, 255, 255, 0.3);
-}
-.header .right-group label {
-  color: var(--tu-on-brand);
-}
-.header .right-group label:hover {
-  color: var(--tu-on-brand);
-  opacity: 0.8;
+  background-color: var(--sl-color-bg-nav);
+  border-bottom-color: var(--sl-color-hairline);
 }
 
-/* The one primary call-to-action per splash-page view gets --tu-blue (brand.md rule
-   1) — e.g. "Лекция 1". Secondary actions (e.g. "Конспект за изпит") stay
+/* The one primary call-to-action per splash-page view gets --brand-blue (brand.md
+   rule 1) — e.g. "Лекция 1". Secondary actions (e.g. "Конспект за изпит") stay
    outlined/neutral so blue does not repeat. */
 .sl-link-button.primary {
-  background: var(--tu-blue);
-  border-color: var(--tu-blue);
-  color: var(--tu-on-brand);
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: var(--on-brand);
   transition: background-color var(--course-motion), border-color var(--course-motion);
 }
 .sl-link-button.primary:hover {
-  background: var(--tu-navy-dark);
-  border-color: var(--tu-navy-dark);
-  color: var(--tu-on-brand);
+  background: var(--brand-blue-dark);
+  border-color: var(--brand-blue-dark);
+  color: var(--on-brand);
 }
 .sl-link-button.secondary {
   border-color: var(--sl-color-hairline);
   color: var(--sl-color-text);
 }
 .sl-link-button.secondary:hover {
-  border-color: var(--tu-navy);
-  color: var(--tu-navy);
+  border-color: var(--brand-blue);
+  color: var(--brand-blue);
 }
 :root[data-theme='dark'] .sl-link-button.secondary:hover {
   border-color: var(--course-accent);

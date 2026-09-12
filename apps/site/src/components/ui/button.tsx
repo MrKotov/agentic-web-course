@@ -20,7 +20,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         /* The single scarce brand accent (docs/brand.md rule 1): one `cta` button
            per view, reserved for the primary action ("Стартирай N изпълнения"). */
-        cta: "bg-cta text-cta-foreground hover:bg-[var(--tu-navy-dark)]",
+        cta: "bg-cta text-cta-foreground hover:bg-[var(--brand-blue-dark)]",
       },
       size: {
         default:

@@ -1,0 +1,206 @@
+---
+/**
+ * Hero anchor — concept B from the visual review: a tilted, browser-chrome-framed
+ * card showing a real, simplified rendering of the schema-diff table, with a soft
+ * radial blue-tint glow behind it. Data below is a genuine excerpt computed at build
+ * time from the same fixture and the same `analyse()` used by the prompt variance
+ * runner (src/components/PromptVarianceRunner.tsx) — not a hand-drawn mockup.
+ */
+import { PROMPT_VARIANCE_FIXTURE } from '../../data/prompt-variance';
+import { analyse, type ShapeKind } from '../lib/json-shape';
+
+const KIND_LABEL: Record<ShapeKind, string> = {
+  string: 'str',
+  number: 'num',
+  boolean: 'bool',
+  null: 'null',
+  object: 'obj',
+  'array<empty>': '[]',
+  'array<string>': '[str]',
+  'array<number>': '[num]',
+  'array<object>': '[obj]',
+  'array<mixed>': '[mix]',
+};
+
+const excerptRuns = PROMPT_VARIANCE_FIXTURE.runs.slice(0, 4).map((run) => ({
+  index: run.index,
+  raw: run.raw,
+  latencyMs: run.latencyMs,
+  completionTokens: run.completionTokens,
+}));
+const { runs, summary } = analyse(excerptRuns);
+const fieldRows = summary.fields.slice(0, 6);
+---
+
+<div class="schema-diff-frame" data-parallax-frame>
+  <div class="schema-diff-frame__chrome">
+    <span class="schema-diff-frame__dot" aria-hidden="true"></span>
+    <span class="schema-diff-frame__dot" aria-hidden="true"></span>
+    <span class="schema-diff-frame__dot" aria-hidden="true"></span>
+    <span class="schema-diff-frame__url" aria-hidden="true">
+      course.site / лекция-1 / разлика-в-схемата
+    </span>
+  </div>
+  <div class="schema-diff-frame__body">
+    <p class="schema-diff-frame__caption">Един промпт, {runs.length} изпълнения — {summary.distinctSchemas} различни схеми</p>
+    <table class="schema-diff-frame__table">
+      <thead>
+        <tr>
+          <th scope="col">път</th>
+          {runs.map((run) => <th scope="col">#{run.index}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {fieldRows.map((field) => {
+          const conflicting = field.kinds.length > 1;
+          return (
+            <tr>
+              <th scope="row" class={conflicting ? 'is-conflict' : undefined}>
+                {field.path}
+              </th>
+              {runs.map((run) => {
+                const kind = run.shape.get(field.path);
+                return (
+                  <td class={kind ? (conflicting ? 'is-conflict' : undefined) : 'is-missing'}>
+                    {kind ? KIND_LABEL[kind] : '—'}
+                  </td>
+                );
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .schema-diff-frame {
+    --tilt-rx: 6deg;
+    --tilt-ry: -3deg;
+    transform: perspective(1400px) rotateX(var(--tilt-rx)) rotateY(var(--tilt-ry));
+    transform-style: preserve-3d;
+    border-radius: 0.9rem;
+    border: 1px solid var(--border-c);
+    background: var(--card);
+    box-shadow:
+      0 2px 6px rgb(15 23 42 / 6%),
+      0 30px 60px -20px rgb(15 23 42 / 22%);
+    overflow: hidden;
+    will-change: transform;
+  }
+
+  :root[data-theme='dark'] .schema-diff-frame {
+    box-shadow:
+      0 2px 6px rgb(0 0 0 / 30%),
+      0 30px 60px -20px rgb(0 0 0 / 55%);
+  }
+
+  .schema-diff-frame__chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.75rem;
+    background: var(--paper-sunken);
+    border-bottom: 1px solid var(--border-c);
+  }
+  :root[data-theme='dark'] .schema-diff-frame__chrome {
+    background: var(--paper-sunken-dark);
+    border-bottom-color: var(--border-dark);
+  }
+
+  .schema-diff-frame__dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    background: var(--border-c);
+  }
+  :root[data-theme='dark'] .schema-diff-frame__dot {
+    background: var(--border-dark);
+  }
+
+  .schema-diff-frame__url {
+    margin-inline-start: 0.6rem;
+    font-family: var(--course-mono);
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    background: var(--paper);
+    border: 1px solid var(--border-c);
+    border-radius: 999px;
+    padding: 0.15rem 0.65rem;
+    flex: 1;
+    max-width: 22rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :root[data-theme='dark'] .schema-diff-frame__url {
+    color: var(--ink-muted-dark);
+    background: var(--paper-dark);
+    border-color: var(--border-dark);
+  }
+
+  .schema-diff-frame__body {
+    padding: 1rem 1.1rem 1.2rem;
+  }
+
+  .schema-diff-frame__caption {
+    margin: 0 0 0.7rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+  :root[data-theme='dark'] .schema-diff-frame__caption {
+    color: var(--ink-muted-dark);
+  }
+
+  .schema-diff-frame__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--course-mono);
+    font-size: 0.78rem;
+  }
+  .schema-diff-frame__table th,
+  .schema-diff-frame__table td {
+    padding: 0.32rem 0.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-c);
+    white-space: nowrap;
+  }
+  :root[data-theme='dark'] .schema-diff-frame__table th,
+  :root[data-theme='dark'] .schema-diff-frame__table td {
+    border-bottom-color: var(--border-dark);
+  }
+  .schema-diff-frame__table thead th {
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  :root[data-theme='dark'] .schema-diff-frame__table thead th {
+    color: var(--ink-muted-dark);
+  }
+  .schema-diff-frame__table tbody th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  :root[data-theme='dark'] .schema-diff-frame__table tbody th {
+    color: var(--ink-dark);
+  }
+  .schema-diff-frame__table td.is-missing {
+    color: var(--ink-muted);
+    opacity: 0.55;
+  }
+  :root[data-theme='dark'] .schema-diff-frame__table td.is-missing {
+    color: var(--ink-muted-dark);
+  }
+  .schema-diff-frame__table .is-conflict {
+    color: var(--destructive);
+    font-weight: 700;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .schema-diff-frame {
+      transform: none;
+    }
+  }
+</style>

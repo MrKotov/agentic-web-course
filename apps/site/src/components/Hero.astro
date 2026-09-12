@@ -1,0 +1,155 @@
+---
+/**
+ * Override of Starlight's built-in Hero component (registered in astro.config.mjs,
+ * `starlight({ components: { Hero: './src/components/Hero.astro' } })`), used only by
+ * `template: splash` pages (currently just the homepage).
+ *
+ * Keeps Starlight's own title/tagline/action-button rendering (so frontmatter `hero:`
+ * in src/content/docs/index.mdx still works unchanged) and replaces the image slot
+ * with the approved mixed-concept visual: concept B (tilted browser-chrome frame
+ * showing a real schema-diff excerpt) as the hero anchor, with a soft radial
+ * blue-tint glow behind it. Concept A's floating product-fragment cards live further
+ * down the page instead — see src/components/home/FloatingCards.astro, used directly
+ * in index.mdx near the lectures/exercises overview, not here.
+ */
+import { LinkButton } from '@astrojs/starlight/components';
+import SchemaDiffFrame from './home/SchemaDiffFrame.astro';
+
+// Starlight's internal `PAGE_TITLE_ID` constant ('_top') isn't part of its public
+// export map (only `./components` and `./locals` are) — the skip-link target id is
+// hardcoded here to match it instead of reaching into Starlight's internals.
+const PAGE_TITLE_ID = '_top';
+
+const { data } = Astro.locals.starlightRoute.entry;
+const { title = data.title, tagline, actions = [] } = data.hero || {};
+---
+
+<div class="hero" data-parallax-hero>
+  <div class="hero-visual">
+    <div class="hero-visual__glow" data-parallax-glow aria-hidden="true"></div>
+    <SchemaDiffFrame />
+  </div>
+  <div class="sl-flex stack">
+    <div class="sl-flex copy">
+      <h1 id={PAGE_TITLE_ID} data-page-title set:html={title} />
+      {tagline && <div class="tagline" set:html={tagline} />}
+    </div>
+    {
+      actions.length > 0 && (
+        <div class="sl-flex actions">
+          {actions.map(
+            ({ attrs: { class: className, ...attrs } = {}, icon, link: href, text, variant }) => (
+              <LinkButton {href} {variant} icon={icon?.name} class:list={[className]} {...attrs}>
+                {text}
+                {icon?.html && <Fragment set:html={icon.html} />}
+              </LinkButton>
+            ),
+          )}
+        </div>
+      )
+    }
+  </div>
+</div>
+
+<script src="./home/home-parallax.client.ts"></script>
+
+<style>
+  @layer starlight.core {
+    .hero {
+      display: grid;
+      align-items: center;
+      gap: 2rem;
+      padding-block: 1.5rem 1rem;
+      /* The glow bleeds past the frame on purpose (see .hero-visual__glow's inset
+         below) — clip it at the page edge so it can never cause horizontal scroll,
+         the one thing course.css's "page never scrolls sideways" rule forbids. */
+      overflow-x: clip;
+    }
+
+    .hero-visual {
+      position: relative;
+      width: min(100%, 30rem);
+      margin-inline: auto;
+    }
+
+    .hero-visual__glow {
+      position: absolute;
+      inset: -18% -14%;
+      background: radial-gradient(ellipse at 55% 40%, var(--hero-glow), transparent 70%);
+      filter: blur(36px);
+      z-index: 0;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .hero-visual > :global(.schema-diff-frame) {
+      position: relative;
+      z-index: 1;
+    }
+
+    .stack {
+      flex-direction: column;
+      gap: clamp(1.5rem, calc(1.5rem + 1vw), 2rem);
+      text-align: center;
+    }
+
+    .copy {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .copy > * {
+      max-width: 50ch;
+    }
+
+    h1 {
+      font-size: clamp(var(--sl-text-3xl), calc(0.25rem + 5vw), var(--sl-text-6xl));
+      line-height: var(--sl-line-height-headings);
+      font-weight: 600;
+      color: var(--sl-color-white);
+    }
+
+    .tagline {
+      font-size: clamp(var(--sl-text-base), calc(0.0625rem + 2vw), var(--sl-text-xl));
+      color: var(--sl-color-gray-2);
+    }
+
+    .actions {
+      gap: 1rem 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    @media (min-width: 50rem) {
+      .hero {
+        grid-template-columns: 7fr 5fr;
+        gap: 4%;
+        padding-block: clamp(2.5rem, calc(1rem + 10vmin), 8rem);
+      }
+
+      .hero-visual {
+        order: 2;
+        width: min(100%, 30rem);
+      }
+
+      .stack {
+        text-align: start;
+      }
+
+      .copy {
+        align-items: flex-start;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-visual__glow {
+        transform: none;
+      }
+    }
+  }
+</style>

@@ -40,6 +40,12 @@ export default defineConfig({
         { label: 'Упражнения', autogenerate: { directory: 'exercises' } },
         { label: 'Справочник', autogenerate: { directory: 'reference' } },
       ],
+      // Mixed-concept homepage hero (docs/brand.md, visual review): tilted
+      // browser-frame anchor with a real schema-diff excerpt, replacing Starlight's
+      // default splash-page image slot. See src/components/Hero.astro.
+      components: {
+        Hero: './src/components/Hero.astro',
+      },
     }),
   ],
 

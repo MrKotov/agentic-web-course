@@ -1,0 +1,169 @@
+---
+/**
+ * Concept A from the visual review, scattered further down the homepage (not in the
+ * hero — see src/components/Hero.astro for concept B, the tilted browser frame that
+ * anchors the hero instead). Each card is styled like a small, real product fragment
+ * using shadcn's own Card/Badge components, at a gentle fixed rotation, drifting at a
+ * different parallax speed than the surrounding content on scroll
+ * (src/components/home/home-parallax.client.ts).
+ *
+ * Rendered as plain Astro-time markup — the React Card/Badge components are used
+ * here purely for their static output (no `client:*` directive), so this ships zero
+ * extra JS beyond the one shared parallax script. Purely decorative: `pointer-events:
+ * none` throughout and z-indexed behind the real content in this section (see the
+ * `.home-floating-cards` / `relative z-10` pairing where this is used in index.mdx),
+ * so it can never intercept a click or fight the CardGrid for attention.
+ *
+ * Hidden below the 768px breakpoint (course.css's "Narrow screens" section) rather
+ * than fought into a cramped mobile layout — see the README/handoff note on the
+ * mobile decision.
+ */
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
+---
+
+<div class="home-floating-cards" aria-hidden="true">
+  <div class="home-floating-cards__item is-a" data-parallax-card="0.10" data-parallax-rotate="-6">
+    <Card className="w-56 gap-2 py-3 shadow-md">
+      <CardHeader className="gap-1 px-3.5">
+        <div class="flex items-center justify-between gap-2">
+          <CardTitle className="text-xs font-semibold">tool_call</CardTitle>
+          <Badge variant="secondary" className="text-[0.65rem]">mcp</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="px-3.5">
+        <pre class="home-floating-cards__code">{`{
+  "name": "schema.diff",
+  "arguments": {
+    "runId": 7
+  }
+}`}</pre>
+      </CardContent>
+    </Card>
+  </div>
+
+  <div class="home-floating-cards__item is-b" data-parallax-card="0.18" data-parallax-rotate="4">
+    <Card className="w-52 gap-2 py-3 shadow-md">
+      <CardHeader className="gap-1 px-3.5">
+        <CardTitle className="text-xs font-semibold">схема · конфликт</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-wrap gap-1.5 px-3.5">
+        <Badge variant="warn" className="text-[0.65rem]">salary: str → obj</Badge>
+        <Badge variant="destructive" className="text-[0.65rem]">невалиден JSON</Badge>
+      </CardContent>
+    </Card>
+  </div>
+
+  <div class="home-floating-cards__item is-c" data-parallax-card="0.07" data-parallax-rotate="3">
+    <Card className="w-56 gap-2 py-3 shadow-md">
+      <CardHeader className="gap-1 px-3.5">
+        <CardTitle className="text-xs font-semibold">agent loop · стъпка 3</CardTitle>
+      </CardHeader>
+      <CardContent className="px-3.5">
+        <ol class="home-floating-cards__steps">
+          <li>промпт</li>
+          <li class="is-current">извикване на инструмент</li>
+          <li>наблюдение</li>
+        </ol>
+      </CardContent>
+    </Card>
+  </div>
+
+  <div class="home-floating-cards__item is-d" data-parallax-card="0.14" data-parallax-rotate="-3">
+    <Card className="w-56 gap-2 py-3 shadow-md">
+      <CardHeader className="gap-1 px-3.5">
+        <div class="flex items-center justify-between gap-2">
+          <CardTitle className="text-xs font-semibold">MCP · tools/list</CardTitle>
+          <Badge variant="ok" className="text-[0.65rem]">избран</Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="px-3.5">
+        <p class="home-floating-cards__mono">read_file · write_file · schema.diff ✓</p>
+      </CardContent>
+    </Card>
+  </div>
+</div>
+
+<style>
+  .home-floating-cards {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .home-floating-cards__item {
+    position: absolute;
+    opacity: 0.8;
+    will-change: transform;
+  }
+
+  :root[data-theme='dark'] .home-floating-cards__item {
+    opacity: 0.7;
+  }
+
+  .home-floating-cards__item.is-a {
+    top: -2rem;
+    left: -3%;
+    transform: rotate(-6deg);
+  }
+  .home-floating-cards__item.is-b {
+    top: 6rem;
+    right: -2%;
+    transform: rotate(4deg);
+  }
+  .home-floating-cards__item.is-c {
+    bottom: -1rem;
+    left: 2%;
+    transform: rotate(3deg);
+  }
+  .home-floating-cards__item.is-d {
+    bottom: 4rem;
+    right: 4%;
+    transform: rotate(-3deg);
+  }
+
+  .home-floating-cards__code,
+  .home-floating-cards__mono {
+    font-family: var(--course-mono);
+    font-size: 0.68rem;
+    line-height: 1.4;
+    color: var(--ink-muted);
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+  }
+  :root[data-theme='dark'] .home-floating-cards__code,
+  :root[data-theme='dark'] .home-floating-cards__mono {
+    color: var(--ink-muted-dark);
+  }
+
+  .home-floating-cards__steps {
+    margin: 0;
+    padding-inline-start: 1.1rem;
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    display: grid;
+    gap: 0.15rem;
+  }
+  :root[data-theme='dark'] .home-floating-cards__steps {
+    color: var(--ink-muted-dark);
+  }
+  .home-floating-cards__steps .is-current {
+    color: var(--brand-blue);
+    font-weight: 600;
+  }
+  :root[data-theme='dark'] .home-floating-cards__steps .is-current {
+    color: var(--brand-blue-dark-mode);
+  }
+
+  /* Narrow screens (course.css's 768px floor for motion): don't render the floating
+     layer at all rather than fight a cramped mobile layout with drifting decoration
+     (see the README/handoff note for the full reasoning). */
+  @media (max-width: 48rem) {
+    .home-floating-cards {
+      display: none;
+    }
+  }
+</style>
