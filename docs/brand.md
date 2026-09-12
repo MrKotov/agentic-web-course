@@ -1,55 +1,54 @@
-# Brand: TU Sofia colors
+# Brand: white / blue
 
 Single source of truth for color across `apps/site/` and `apps/platform/`. Both restyles
 must pull from this file rather than inventing their own values, so the two apps read as
 one system rather than two unrelated redesigns.
 
-## Where these numbers came from
+## History — two palettes tried, this is the one that stuck
 
-Not guessed, not from a public brand-guidelines PDF (none is indexed publicly as of this
-writing). Sampled directly from `tu-sofia.bg`'s live, rendered page on 2026-09-12:
+**First pass:** TU Sofia's own navy (`#1d3b76`), sampled directly from `tu-sofia.bg`'s
+live header via `getComputedStyle`. Implemented with hand-rolled CSS, then rebuilt on
+Tailwind + shadcn/ui. User's reaction to that whole direction: navy/blue anchored to the
+university's own site, "looks terrible like a bootstrap of twitter." Rejected outright,
+including the TU-navy anchor itself — see the session record for the full back-and-forth
+(several shadcn preset options shown, a blue-forward round, then this).
 
-- Header background, computed via `getComputedStyle`, converted through a canvas
-  round-trip: **`#233876`**.
-- Primary nav buttons ("За университета", "Студенти", "Наука и иновации"): **`#1c2d5e`**.
-- Repeated pill/tag elements (category labels on news cards, most frequent single value
-  on the page): **`#1d3b76`**.
-- The one bright, saturated color on the page, used only for the single primary
-  call-to-action ("Прием 2026"): **`#1447e6`**.
-- Light card background behind image placeholders: **`#f5f7ff`**.
-- The university's own logo mark ships in exactly two variants: solid white, and solid
-  black — no color in the mark itself. White-on-navy is the pairing actually used in
-  their own header. That is the pairing to reuse, not a novel combination.
-
-These four navy values (`#233876`, `#1c2d5e`, `#1d3b76`, plus `#233875` seen once) are
-one design intent expressed slightly differently across components, not four different
-colors — treat them as one navy with minor implementation drift on the source site.
+**This pass — the one in force:** a plain white background with one confident blue
+accent, arrived at through a visual concept comparison (a live picker artifact showing
+real UI-card mockups in this exact palette), confirmed directly by the user. The blue
+below is a **designed choice for this pass**, not re-sampled from an external source —
+say so plainly rather than implying a provenance it doesn't have. It sits close to (but
+is not identical to) TU Sofia's own CTA blue (`#1447e6`), which is a coincidence of both
+being a confident, mid-saturation blue — not a deliberate callback.
 
 ## Tokens
 
 ```css
-/* Brand — from tu-sofia.bg, do not adjust without re-sampling the source */
---tu-navy:        #1d3b76;  /* primary: headers, nav, primary buttons */
---tu-navy-dark:   #14285c;  /* hover/active state on navy, dark-mode surface */
---tu-navy-light:  #2c4f96;  /* hover state on white, accessible-on-navy tints */
---tu-blue:        #1447e6;  /* single accent — reserve for ONE primary action per view */
---tu-blue-tint:   #f5f7ff;  /* card/section backgrounds, light mode only */
+/* Brand — the settled palette. White page, one accent, one soft tint. Do not add a
+   second brand hue (no purple, no green, no orange) without redoing this file. */
+--brand-blue:        #2b62e6;  /* the one accent — reserve for ONE primary action/view */
+--brand-blue-dark:   #1f4bc4;  /* hover/active state on --brand-blue */
+--brand-blue-tint:   #eaf0ff;  /* soft background shapes, badges, subtle fills */
 
-/* Neutrals — not sampled from the source (their site doesn't need to serve MDX prose
-   or code blocks); chosen to sit quietly next to --tu-navy without competing */
---ink:            #101828;  /* body text, light mode */
---ink-muted:      #4b5565;
---paper:          #ffffff;  /* page background, light mode */
---paper-sunken:   #f5f7ff;  /* = --tu-blue-tint, reused for consistency */
---border:         #dfe4ee;
+/* Neutrals — white carries the page, not a tinted neutral. Kept slightly cool so it
+   doesn't fight the blue accent. */
+--ink:            #0f172a;  /* body text, light mode */
+--ink-muted:      #5b6478;
+--paper:          #ffffff;  /* page background, light mode — this IS the brand now,
+                                not a neutral default; don't tint it */
+--paper-sunken:   #f4f7fd;  /* card/section backgrounds one step off white */
+--border:         #e3e8f2;
 
-/* Dark mode — navy is already dark, so dark mode inverts around it rather than
-   producing a second unrelated palette */
+/* Dark mode — white-as-brand has no direct dark equivalent, so dark mode is a
+   conventional near-black inversion with the same blue accent lightened for contrast,
+   not a literal invert of --paper. Verify contrast before shipping, these are not
+   independently re-verified the way the light pairing was. */
 --ink-dark:       #e8ecf5;
---ink-muted-dark: #a3adc2;
---paper-dark:     #0b1224;
---paper-sunken-dark: #121a33;
---border-dark:    #263257;
+--ink-muted-dark: #99a2b8;
+--paper-dark:     #0b0f1a;
+--paper-sunken-dark: #131826;
+--border-dark:    #232b3d;
+--brand-blue-dark-mode: #6f97f2;  /* lightened so it clears AA on --paper-dark */
 
 /* Semantic — functional, not brand. Never repurpose these for decoration. */
 --success:        #176e45;  /* darkened from an earlier #1a7f4f: that measured 4.42:1 on
@@ -97,20 +96,24 @@ Astro support, what Claude/Cursor/v0/Bolt are trained on and default to):
 
 ## Rules
 
-1. **`--tu-blue` is scarce on purpose.** The source site uses its one bright blue for
-   exactly one thing per page: the primary call to action. Copy that discipline — one
-   `--tu-blue` element per view (the join-quiz button, "Стартирай" on the variance
-   runner), not every interactive element.
-2. **Navy carries the identity, not blue.** Headers, nav, and primary buttons are navy.
-   If a page reads as "a blue site" rather than "a navy site with one blue accent,"
-   that's the token misused.
-3. **White text on navy, navy text on white** — the verified pairing. Don't put navy
-   text on `--tu-blue-tint` at low contrast; check against WCAG AA (4.5:1 body text)
-   before shipping any new color pair, especially in dark mode where the swaps above are
-   inversions, not verified samples.
-4. **Semantic colors stay semantic.** `--success`/`--danger`/`--warning` are for pass/fail
+1. **`--brand-blue` is scarce on purpose.** One primary action per view (the join-quiz
+   button, "Стартирай" on the variance runner, one hero CTA) — not every button, link,
+   and badge. The failure mode that got the first palette rejected was everything
+   reading as "blue," not one accent standing out against a quiet page.
+2. **White carries the identity now, not a brand color.** The page reads as clean and
+   product-first because it's mostly white/near-white with restrained borders — the blue
+   earns attention precisely because it's rare. Don't tint `--paper` toward blue "for
+   brand consistency"; that's the mistake this pass moved away from.
+3. **Imagery matches the discipline too.** Hero/background graphics (see the two concept
+   directions under review) stay in this palette only — white ground, blue linework,
+   `--brand-blue-tint` fills. No second hue, no photographic/gradient-blob treatment.
+4. **Check contrast before shipping a new pairing.** `--ink` on `--paper` and
+   `--brand-blue` on `--paper` are the two pairings actually verified; anything new
+   (especially in dark mode, which is an inversion, not independently sampled) needs a
+   real check against WCAG AA (4.5:1 body text, 3:1 large/bold text) before use.
+5. **Semantic colors stay semantic.** `--success`/`--danger`/`--warning` are for pass/fail
    states (autograder results, form validation) — never used as decoration or to imply
    brand.
-5. Both apps expose these as CSS custom properties on `:root` (and the dark-mode block),
+6. Both apps expose these as CSS custom properties on `:root` (and the dark-mode block),
    named identically, so a value changed here is a value changed in exactly two files,
    not a search-and-replace across templates.
