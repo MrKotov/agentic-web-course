@@ -406,8 +406,10 @@ function RunCard({
   readonly open: boolean;
   readonly onToggle: () => void;
 }): React.ReactElement {
+  const tone = !run.parsed ? 'bad' : run.hadWrapper || run.schemaId !== 1 ? 'warn' : 'ok';
+
   return (
-    <article className="pv__run" data-open={open || undefined}>
+    <article className="pv__run" data-open={open || undefined} data-tone={tone}>
       <header>
         <strong>#{run.index}</strong>
         {run.parsed ? (

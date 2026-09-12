@@ -2,213 +2,639 @@
    Two hard requirements drive everything here:
    - readable from the back of a lecture hall on a 1080p projector at full screen,
    - usable at 400px wide on a phone.
-   Colours are expressed only through Starlight's theme variables so light and dark
-   both work without a second palette. */
 
+   Colour comes from `docs/brand.md` (single source of truth, shared with apps/platform/).
+   Section 1 below is copied verbatim from that file — do not hand-edit a value here
+   without re-sampling the source and updating brand.md first. Section 2 maps those
+   tokens onto Starlight's own `--sl-color-*` variables so the built-in dark/light
+   toggle, sidebar, search and code blocks repaint correctly instead of looking like a
+   second, unrelated theme glued on top. */
+
+/* ---- 1. Brand tokens (docs/brand.md) ------------------------------------ */
 :root {
-  --course-content-width: 60rem;
-  --course-radius: 0.5rem;
-  /* Component surface tokens. Light theme values. */
-  --course-surface: var(--sl-color-gray-7, #f6f6f9);
-  --course-surface-raised: var(--sl-color-white);
-  --course-border: var(--sl-color-gray-5);
+  --tu-navy: #1d3b76;
+  --tu-navy-dark: #14285c;
+  --tu-navy-light: #2c4f96;
+  --tu-blue: #1447e6; /* single accent — reserve for ONE primary action per view */
+  --tu-blue-tint: #f5f7ff;
+
+  --ink: #101828;
+  --ink-muted: #4b5565;
+  --paper: #ffffff;
+  --paper-sunken: #f5f7ff;
+  --border: #dfe4ee;
+
+  --ink-dark: #e8ecf5;
+  --ink-muted-dark: #a3adc2;
+  --paper-dark: #0b1224;
+  --paper-sunken-dark: #121a33;
+  --border-dark: #263257;
+
+  --success: #1a7f4f;
+  --success-tint: #e6f4ec;
+  --danger: #c4293a;
+  --danger-tint: #fbeaec;
+  --warning: #a15c00;
+  --warning-tint: #fbf0dc;
+
+  /* White-on-navy is brand.md's one verified pairing (rule 3). Both --tu-navy and
+     --tu-blue are dark-toned hues in *both* themes, so the text that sits on them
+     stays a constant white rather than inverting the way Starlight's own
+     `--sl-color-black`/`--sl-color-white` aliases do between light and dark mode. */
+  --tu-on-brand: #ffffff;
+}
+
+/* ---- 2. Map brand tokens onto Starlight's variables --------------------- */
+/* Light mode (the :root defaults below match Starlight's `[data-theme='light']`
+   block; the dark override further down matches Starlight's own :root defaults). */
+:root {
+  --sl-color-text: var(--ink);
+  --sl-color-bg: var(--paper);
+  --sl-color-bg-nav: var(--paper-sunken);
+  --sl-color-bg-sidebar: var(--paper-sunken);
+  --sl-color-bg-inline-code: var(--paper-sunken);
+  --sl-color-hairline: var(--border);
+  --sl-color-hairline-light: var(--border);
+  --sl-color-hairline-shade: var(--border);
+
+  /* Accent: navy carries the identity (brand.md rule 2). --tu-blue is reserved for
+     the primary-action buttons below, not for every link and highlighted nav item. */
+  --sl-color-accent-low: var(--tu-blue-tint);
+  --sl-color-accent: var(--tu-navy);
+  --sl-color-accent-high: var(--tu-navy-dark);
+  --sl-color-bg-accent: var(--tu-navy);
+
+  /* Component surface tokens used below and by the interactive components. */
+  --course-surface: var(--paper-sunken);
+  --course-surface-raised: var(--paper);
+  --course-border: var(--border);
+  --course-text-muted: var(--ink-muted);
   --course-accent: var(--sl-color-accent);
-  --course-accent-text: var(--sl-color-accent-high);
-  --course-ok: #1a7f4b;
-  --course-warn: #9a6400;
-  --course-bad: #b3261e;
+  --course-ok: var(--success);
+  --course-ok-tint: var(--success-tint);
+  --course-warn: var(--warning);
+  --course-warn-tint: var(--warning-tint);
+  --course-bad: var(--danger);
+  --course-bad-tint: var(--danger-tint);
+  --course-radius: 0.5rem;
+  --course-radius-lg: 0.85rem;
+  --course-shadow: var(--sl-shadow-sm);
+  --course-shadow-raised: var(--sl-shadow-md);
+  --course-content-width: 60rem;
   --course-mono: var(--__sl-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  --course-motion: 160ms ease;
 }
 
 :root[data-theme='dark'] {
-  --course-surface: var(--sl-color-gray-6, #1c1f2b);
-  --course-surface-raised: var(--sl-color-gray-7, #16181f);
-  --course-border: var(--sl-color-gray-5);
-  --course-ok: #5ddb9b;
-  --course-warn: #f0c060;
-  --course-bad: #ff8a80;
+  --sl-color-text: var(--ink-dark);
+  --sl-color-bg: var(--paper-dark);
+  --sl-color-bg-nav: var(--paper-sunken-dark);
+  --sl-color-bg-sidebar: var(--paper-sunken-dark);
+  --sl-color-bg-inline-code: var(--paper-sunken-dark);
+  --sl-color-hairline: var(--border-dark);
+  --sl-color-hairline-light: var(--border-dark);
+  --sl-color-hairline-shade: var(--border-dark);
+
+  /* --tu-navy-light on its own fails AA on the near-black page background (2.4:1), so
+     dark mode gets its own lighter tints derived from the navy hue instead of an
+     inversion of the light-mode values — verified below, brand.md rule 3. */
+  --sl-color-accent-low: var(--tu-navy-dark);
+  --sl-color-accent: #9fb6ef; /* contrast vs --paper-dark: 9.2:1 */
+  --sl-color-accent-high: #c9d6f5; /* contrast vs --paper-dark: 12.8:1 */
+  --sl-color-bg-accent: var(--tu-navy-light);
+
+  --course-surface: var(--paper-sunken-dark);
+  --course-surface-raised: #16204a;
+  --course-border: var(--border-dark);
+  --course-text-muted: var(--ink-muted-dark);
+  --course-accent: var(--sl-color-accent);
+  --course-ok: #4fd38f; /* dark-mode-legible tint of --success, same hue */
+  --course-ok-tint: rgba(26, 127, 79, 0.22);
+  --course-warn: #f0c060; /* dark-mode-legible tint of --warning, same hue */
+  --course-warn-tint: rgba(161, 92, 0, 0.22);
+  --course-bad: #ff8a80; /* dark-mode-legible tint of --danger, same hue */
+  --course-bad-tint: rgba(196, 41, 58, 0.22);
 }
 
-/* ---- Hall readability -------------------------------------------------- */
-/* Starlight's default body text is 16px. That is not readable from row 12.
-   Scale with the viewport, but never below the mobile-comfortable size. */
+/* The site header is TU Sofia's own pairing: white-on-navy (brand.md, "logo mark"
+   section). Set literal colours on the header's own children rather than reassigning
+   Starlight's shared `--sl-color-*` variables, so the search dialog and the
+   theme/language dropdowns — which are DOM descendants of the header but must stay on
+   the *page's* normal light/dark surface, not the header's fixed navy one — are
+   unaffected. */
+.header {
+  background-color: var(--tu-navy);
+  border-bottom-color: var(--tu-navy-dark);
+}
+.header :is(.site-title, .site-title span) {
+  color: var(--tu-on-brand);
+}
+.header site-search > button[data-open-modal] {
+  color: var(--tu-on-brand);
+  opacity: 0.9;
+}
+.header site-search > button[data-open-modal]:hover {
+  opacity: 1;
+}
+.header site-search kbd {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--tu-on-brand);
+}
+.header .social-icons,
+.header .social-icons a {
+  color: var(--tu-on-brand);
+}
+.header .social-icons::after {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.header .right-group label {
+  color: var(--tu-on-brand);
+}
+.header .right-group label:hover {
+  color: var(--tu-on-brand);
+  opacity: 0.8;
+}
+
+/* The one primary call-to-action per splash-page view gets --tu-blue (brand.md rule
+   1) — the "join-quiz button" example in brand.md, here it is "Лекция 1". Secondary
+   actions (e.g. "Конспект за изпит") stay outlined/neutral so blue does not repeat. */
+.sl-link-button.primary {
+  background: var(--tu-blue);
+  border-color: var(--tu-blue);
+  color: var(--tu-on-brand);
+  transition: background-color var(--course-motion), border-color var(--course-motion);
+}
+.sl-link-button.primary:hover {
+  background: var(--tu-navy-dark);
+  border-color: var(--tu-navy-dark);
+  color: var(--tu-on-brand);
+}
+.sl-link-button.secondary {
+  border-color: var(--sl-color-hairline);
+  color: var(--sl-color-text);
+}
+.sl-link-button.secondary:hover {
+  border-color: var(--tu-navy);
+  color: var(--tu-navy);
+}
+:root[data-theme='dark'] .sl-link-button.secondary:hover {
+  border-color: var(--course-accent);
+  color: var(--course-accent);
+}
+
+/* ---- 3. Type scale — hall readability ----------------------------------- */
+/* Starlight's default body text is 16px, fixed. That is not readable from row 12 of
+   a lecture hall. Scale with the viewport, floor and ceiling chosen so it never goes
+   below mobile-comfortable and never runs away on an ultrawide projector. */
 :root {
   --sl-text-body: clamp(1rem, 0.82rem + 0.55vw, 1.35rem);
   --sl-text-code: clamp(0.9rem, 0.74rem + 0.5vw, 1.2rem);
   --sl-line-height: 1.75;
+  --sl-line-height-headings: 1.2;
   --sl-content-width: var(--course-content-width);
 }
 
-.sl-markdown-content h1 { font-size: clamp(1.9rem, 1.3rem + 2.2vw, 3.2rem); line-height: 1.15; }
-.sl-markdown-content h2 { font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.3rem); line-height: 1.2; }
-.sl-markdown-content h3 { font-size: clamp(1.2rem, 1rem + 0.9vw, 1.7rem); }
-.sl-markdown-content :is(p, li) { max-width: 46em; }
-.sl-markdown-content pre { font-size: var(--sl-text-code); }
+.sl-markdown-content h1 {
+  font-size: clamp(1.9rem, 1.3rem + 2.2vw, 3.2rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.sl-markdown-content h2 {
+  font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.3rem);
+  line-height: 1.2;
+  margin-top: 2.5em;
+  padding-top: 0.6em;
+  border-top: 1px solid var(--sl-color-hairline);
+}
+.sl-markdown-content h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+.sl-markdown-content h3 {
+  font-size: clamp(1.2rem, 1rem + 0.9vw, 1.7rem);
+}
+.sl-markdown-content h4 {
+  font-size: clamp(1.05rem, 0.94rem + 0.55vw, 1.35rem);
+}
+.sl-markdown-content :is(p, li) {
+  max-width: 46em;
+}
+.sl-markdown-content pre {
+  font-size: var(--sl-text-code);
+  box-shadow: var(--course-shadow);
+}
+.sl-markdown-content blockquote {
+  border-inline-start: 3px solid var(--course-accent);
+  color: var(--course-text-muted);
+}
 
-/* ---- Narrow screens (400px is the floor we support) -------------------- */
+/* ---- Narrow screens (400px is the floor we support) --------------------- */
 @media (max-width: 30rem) {
-  :root { --sl-text-body: 1rem; --sl-line-height: 1.65; }
-  .sl-markdown-content :is(table, pre) { font-size: 0.9rem; }
-  .course-panel { padding: 0.75rem; }
+  :root {
+    --sl-text-body: 1rem;
+    --sl-line-height: 1.65;
+  }
+  .sl-markdown-content :is(table, pre) {
+    font-size: 0.9rem;
+  }
+  .course-panel {
+    padding: 0.75rem;
+  }
+  .sl-markdown-content h2 {
+    margin-top: 2em;
+  }
 }
 
 /* Anything wide scrolls inside itself; the page never scrolls sideways. */
-.sl-markdown-content :is(table, .course-scroll-x) { display: block; max-width: 100%; overflow-x: auto; }
+.sl-markdown-content :is(table, .course-scroll-x) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
 
-/* ---- Shared component chrome ------------------------------------------ */
+/* ---- 4. Shared component chrome ------------------------------------------ */
 .course-panel {
   background: var(--course-surface);
   border: 1px solid var(--course-border);
-  border-radius: var(--course-radius);
-  padding: 1rem;
-  margin-block: 1.5rem;
+  border-radius: var(--course-radius-lg);
+  padding: 1.25rem;
+  margin-block: 1.75rem;
   container-type: inline-size;
 }
 .course-panel__head {
-  display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
-  justify-content: space-between; margin-bottom: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
 }
-.course-panel__title { font-weight: 700; font-size: 1.05em; margin: 0; }
-.course-controls { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.course-panel__title {
+  font-weight: 700;
+  font-size: 1.15em;
+  margin: 0;
+}
+.course-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
 
 .course-btn {
-  font: inherit; font-weight: 600;
-  padding: 0.5em 1em; min-height: 2.75rem;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.5em 1em;
+  min-height: 2.75rem;
   border-radius: var(--course-radius);
   border: 1px solid var(--course-border);
   background: var(--course-surface-raised);
-  color: var(--sl-color-white);
+  color: var(--sl-color-text);
   cursor: pointer;
+  transition: border-color var(--course-motion), background-color var(--course-motion),
+    box-shadow var(--course-motion), transform var(--course-motion);
 }
-.course-btn:hover:not(:disabled) { border-color: var(--course-accent); }
-.course-btn[data-variant='primary'] { background: var(--course-accent); color: var(--sl-color-black); border-color: transparent; }
-.course-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.course-btn:focus-visible, .course-input:focus-visible { outline: 3px solid var(--course-accent); outline-offset: 2px; }
+.course-btn:hover:not(:disabled) {
+  border-color: var(--course-accent);
+  box-shadow: var(--course-shadow);
+}
+.course-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.course-btn[data-variant='primary'] {
+  /* The scarce brand accent — one of these per view (brand.md rule 1). */
+  background: var(--tu-blue);
+  color: var(--tu-on-brand);
+  border-color: var(--tu-blue);
+}
+.course-btn[data-variant='primary']:hover:not(:disabled) {
+  background: var(--tu-navy-dark);
+  border-color: var(--tu-navy-dark);
+}
+.course-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.course-btn:focus-visible,
+.course-input:focus-visible,
+.course-select:focus-visible,
+.course-textarea:focus-visible {
+  outline: 3px solid var(--course-accent);
+  outline-offset: 2px;
+}
 
-.course-input, .course-select, .course-textarea {
-  font: inherit; width: 100%;
-  padding: 0.5em 0.7em; min-height: 2.75rem;
-  color: var(--sl-color-white);
+.course-input,
+.course-select,
+.course-textarea {
+  font: inherit;
+  width: 100%;
+  padding: 0.5em 0.7em;
+  min-height: 2.75rem;
+  color: var(--sl-color-text);
   background: var(--course-surface-raised);
   border: 1px solid var(--course-border);
   border-radius: var(--course-radius);
+  transition: border-color var(--course-motion);
 }
-.course-textarea { font-family: var(--course-mono); min-height: 7rem; resize: vertical; }
+.course-input::placeholder,
+.course-textarea::placeholder {
+  color: var(--course-text-muted);
+}
+.course-input:hover,
+.course-select:hover,
+.course-textarea:hover {
+  border-color: var(--course-accent);
+}
+.course-textarea {
+  font-family: var(--course-mono);
+  min-height: 7rem;
+  resize: vertical;
+}
 
 .course-badge {
-  display: inline-block; font-size: 0.8em; font-weight: 700;
-  padding: 0.15em 0.6em; border-radius: 999px;
-  border: 1px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.8em;
+  font-weight: 700;
+  padding: 0.2em 0.65em 0.2em 0.55em;
+  border-radius: 999px;
+  color: var(--course-ok);
+  background: var(--course-ok-tint);
 }
-.course-badge[data-tone='ok'] { color: var(--course-ok); }
-.course-badge[data-tone='warn'] { color: var(--course-warn); }
-.course-badge[data-tone='bad'] { color: var(--course-bad); }
+.course-badge::before {
+  content: '';
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 999px;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.course-badge[data-tone='ok'] {
+  color: var(--course-ok);
+  background: var(--course-ok-tint);
+}
+.course-badge[data-tone='warn'] {
+  color: var(--course-warn);
+  background: var(--course-warn-tint);
+}
+.course-badge[data-tone='bad'] {
+  color: var(--course-bad);
+  background: var(--course-bad-tint);
+}
 
-.course-note { font-size: 0.9em; opacity: 0.85; }
-.course-mono { font-family: var(--course-mono); }
+.course-note {
+  font-size: 0.9em;
+  color: var(--course-text-muted);
+}
+.course-mono {
+  font-family: var(--course-mono);
+}
 
-/* ---- React Flow: force both themes to render correctly ----------------- */
-/* React Flow ships a light-only stylesheet. These overrides repaint it from the
-   Starlight tokens so the dark theme is not a white box with white text. */
+/* ---- 5. React Flow: force both themes to render correctly ---------------- */
+/* Not built yet — see docs/gate-zero.md item 4 — but kept mapped to the same course
+   tokens above so it inherits the brand palette automatically the day it is built. */
 .react-flow.course-flow {
   --xy-background-color: var(--course-surface);
   --xy-node-background-color: var(--course-surface-raised);
-  --xy-node-color: var(--sl-color-white);
+  --xy-node-color: var(--sl-color-text);
   --xy-node-border: 1px solid var(--course-border);
   --xy-edge-stroke: var(--sl-color-gray-3);
   --xy-edge-stroke-selected: var(--course-accent);
   --xy-controls-button-background-color: var(--course-surface-raised);
   --xy-controls-button-background-color-hover: var(--course-surface);
-  --xy-controls-button-color: var(--sl-color-white);
+  --xy-controls-button-color: var(--sl-color-text);
   --xy-controls-button-border-color: var(--course-border);
   --xy-attribution-background-color: transparent;
   background: var(--course-surface);
-  color: var(--sl-color-white);
+  color: var(--sl-color-text);
 }
-.react-flow.course-flow .react-flow__background { color: var(--sl-color-gray-4); }
-.react-flow.course-flow .react-flow__handle { background: var(--course-accent); border-color: var(--course-surface-raised); }
-.react-flow.course-flow .react-flow__attribution a { color: var(--sl-color-gray-3); }
+.react-flow.course-flow .react-flow__background {
+  color: var(--sl-color-gray-4);
+}
+.react-flow.course-flow .react-flow__handle {
+  background: var(--course-accent);
+  border-color: var(--course-surface-raised);
+}
+.react-flow.course-flow .react-flow__attribution a {
+  color: var(--sl-color-gray-3);
+}
 
-/* ---- Prompt variance runner --------------------------------------------- */
-.pv__prompt { margin-block: 0.75rem; }
-.pv__promptBody { margin-top: 0.5rem; display: grid; gap: 0.35rem; }
-.pv__warn {
-  background: var(--course-surface-raised);
-  border: 1px solid var(--course-warn);
-  border-radius: var(--course-radius);
-  padding: 0.75rem;
+/* ---- 6. Prompt variance runner -------------------------------------------- */
+/* Lecture 1's centerpiece — "the single most convincing artefact in the course"
+   (handover/01-course-site.spec.md). The schema-diff matrix and the badges are the
+   parts that have to be scanned at a glance, so they get the most explicit styling. */
+.pv__prompt {
   margin-block: 0.75rem;
 }
-.pv__live { display: grid; gap: 0.6rem; margin-block: 0.75rem; }
-.pv__field { display: grid; gap: 0.3rem; font-size: 0.9em; }
-.pv__actions { margin-block: 0.75rem; align-items: center; }
+.pv__promptBody {
+  margin-top: 0.5rem;
+  display: grid;
+  gap: 0.35rem;
+}
+.pv__warn {
+  background: var(--course-warn-tint);
+  border: 1px solid var(--course-warn);
+  border-radius: var(--course-radius);
+  padding: 0.75rem 0.9rem;
+  margin-block: 0.75rem;
+  color: var(--sl-color-text);
+}
+.pv__live {
+  display: grid;
+  gap: 0.6rem;
+  margin-block: 0.75rem;
+}
+.pv__field {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.9em;
+}
+.pv__actions {
+  margin-block: 1rem;
+  align-items: center;
+}
 .pv__error {
   color: var(--course-bad);
+  background: var(--course-bad-tint);
   border: 1px solid var(--course-bad);
   border-radius: var(--course-radius);
   padding: 0.6rem 0.8rem;
   margin-block: 0.75rem;
 }
-.pv__h { margin-top: 1.5rem; margin-bottom: 0.35rem; font-size: 1.05em; }
+.pv__h {
+  margin-top: 2rem;
+  margin-bottom: 0.4rem;
+  font-size: 1.1em;
+  font-weight: 700;
+}
 
 .pv__summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
   gap: 0.6rem;
-  margin: 0.75rem 0;
+  margin: 0.9rem 0;
 }
 .pv__stat {
   background: var(--course-surface-raised);
   border: 1px solid var(--course-border);
   border-radius: var(--course-radius);
-  padding: 0.5rem 0.7rem;
+  padding: 0.6rem 0.8rem;
+  box-shadow: var(--course-shadow);
 }
-.pv__stat dt { font-size: 0.75em; opacity: 0.75; margin: 0; }
-.pv__stat dd { font-size: 1.3em; font-weight: 700; margin: 0; }
-.pv__stat dd[data-tone='ok'] { color: var(--course-ok); }
-.pv__stat dd[data-tone='warn'] { color: var(--course-warn); }
-.pv__stat dd[data-tone='bad'] { color: var(--course-bad); }
+.pv__stat dt {
+  font-size: 0.75em;
+  color: var(--course-text-muted);
+  margin: 0;
+}
+.pv__stat dd {
+  font-size: 1.4em;
+  font-weight: 700;
+  margin: 0;
+  color: var(--sl-color-text);
+}
+.pv__stat dd[data-tone='ok'] {
+  color: var(--course-ok);
+}
+.pv__stat dd[data-tone='warn'] {
+  color: var(--course-warn);
+}
+.pv__stat dd[data-tone='bad'] {
+  color: var(--course-bad);
+}
 
-.pv__matrixWrap { margin-block: 0.5rem 1.25rem; }
-.pv__matrix { border-collapse: collapse; width: 100%; font-size: 0.85em; }
-.pv__matrix th, .pv__matrix td {
+/* Field-by-run matrix: the moment the drift becomes undeniable, so it has to be easy
+   to scan a row and a column at once — sticky header + first column, a zebra stripe,
+   and a tint on every cell that belongs to a conflicting row. */
+.pv__matrixWrap {
+  margin-block: 0.5rem 1.5rem;
+  border-radius: var(--course-radius);
   border: 1px solid var(--course-border);
-  padding: 0.3em 0.55em;
+}
+.pv__matrix {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9em;
+}
+.pv__matrix th,
+.pv__matrix td {
+  border-bottom: 1px solid var(--course-border);
+  padding: 0.45em 0.65em;
   text-align: center;
   white-space: nowrap;
 }
-.pv__matrix th[scope='row'] { text-align: left; font-family: var(--course-mono); }
-.pv__matrix td[data-present='no'] { opacity: 0.4; }
-.pv__matrix tr[data-conflict] th[scope='row'] { color: var(--course-bad); }
+.pv__matrix thead th {
+  position: sticky;
+  top: 0;
+  background: var(--course-surface);
+  font-weight: 700;
+  z-index: 1;
+}
+.pv__matrix th[scope='row'] {
+  text-align: left;
+  font-family: var(--course-mono);
+  font-weight: 600;
+  position: sticky;
+  left: 0;
+  background: var(--course-surface-raised);
+  z-index: 1;
+}
+.pv__matrix tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--course-surface) 55%, transparent);
+}
+.pv__matrix td[data-present='no'] {
+  color: var(--course-text-muted);
+  opacity: 0.6;
+}
+.pv__matrix tr[data-conflict] th[scope='row'] {
+  color: var(--course-bad);
+}
+.pv__matrix tr[data-conflict] td[data-present='yes'] {
+  background: var(--course-bad-tint);
+  font-weight: 600;
+}
 .pv__srOnly {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.pv__runs { display: flex; gap: 0.75rem; padding-bottom: 0.25rem; }
+.pv__runs {
+  display: flex;
+  gap: 0.85rem;
+  padding-bottom: 0.5rem;
+}
 .pv__run {
-  min-width: 15rem; max-width: 20rem; flex: 0 0 auto;
+  min-width: 15rem;
+  max-width: 20rem;
+  flex: 0 0 auto;
   background: var(--course-surface-raised);
   border: 1px solid var(--course-border);
+  border-inline-start: 3px solid var(--course-border);
   border-radius: var(--course-radius);
-  padding: 0.65rem 0.8rem;
+  padding: 0.7rem 0.85rem;
+  box-shadow: var(--course-shadow);
+  transition: box-shadow var(--course-motion), border-color var(--course-motion);
 }
-.pv__run[data-open] { max-width: 32rem; }
-.pv__run header { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-bottom: 0.3rem; }
+.pv__run:hover {
+  box-shadow: var(--course-shadow-raised);
+}
+.pv__run[data-tone='ok'] {
+  border-inline-start-color: var(--course-ok);
+}
+.pv__run[data-tone='warn'] {
+  border-inline-start-color: var(--course-warn);
+}
+.pv__run[data-tone='bad'] {
+  border-inline-start-color: var(--course-bad);
+}
+.pv__run[data-open] {
+  max-width: 32rem;
+}
+.pv__run header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
 .pv__raw {
-  margin-top: 0.5rem; max-height: 20rem; overflow: auto;
-  font-size: 0.85em; white-space: pre-wrap; word-break: break-word;
+  margin-top: 0.6rem;
+  max-height: 20rem;
+  overflow: auto;
+  font-size: 0.85em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--course-surface);
+  border-radius: var(--course-radius);
+  padding: 0.6rem 0.7rem;
 }
 
-/* ---- Placeholder components not yet built ------------------------------ */
+/* ---- 7. Placeholder components not yet built ------------------------------ */
 .course-todo {
   border: 1px dashed var(--course-border);
   border-radius: var(--course-radius);
-  padding: 1rem; margin-block: 1.5rem;
+  padding: 1rem;
+  margin-block: 1.5rem;
   background: var(--course-surface);
 }
-.course-todo__label { font-weight: 700; color: var(--course-warn); }
+.course-todo__label {
+  font-weight: 700;
+  color: var(--course-warn);
+}
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
