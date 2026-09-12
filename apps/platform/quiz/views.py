@@ -183,9 +183,7 @@ def usage_mode(request: HttpRequest, quiz_id: int) -> HttpResponse:
     if student is None:
         return redirect("quiz:identify", quiz_id=quiz.pk)
 
-    already = AgentUsageMode.objects.filter(
-        student=student, lecture=quiz.lecture_number
-    ).exists()
+    already = AgentUsageMode.objects.filter(student=student, lecture=quiz.lecture_number).exists()
     if already and request.method == "GET":
         return redirect("quiz:done", quiz_id=quiz.pk)
 

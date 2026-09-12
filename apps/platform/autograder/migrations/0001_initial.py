@@ -10,25 +10,39 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('quiz', '0001_initial'),
+        ("quiz", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Submission',
+            name="Submission",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('exercise', models.CharField(max_length=64)),
-                ('repo', models.CharField(max_length=200)),
-                ('commit', models.CharField(max_length=64)),
-                ('checks', models.JSONField(default=list)),
-                ('completed_at', models.DateTimeField()),
-                ('received_at', models.DateTimeField(default=django.utils.timezone.now)),
-                ('student', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='submissions', to='quiz.student')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("exercise", models.CharField(max_length=64)),
+                ("repo", models.CharField(max_length=200)),
+                ("commit", models.CharField(max_length=64)),
+                ("checks", models.JSONField(default=list)),
+                ("completed_at", models.DateTimeField()),
+                ("received_at", models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "student",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="submissions",
+                        to="quiz.student",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-completed_at'],
-                'unique_together': {('repo', 'commit')},
+                "ordering": ["-completed_at"],
+                "unique_together": {("repo", "commit")},
             },
         ),
     ]

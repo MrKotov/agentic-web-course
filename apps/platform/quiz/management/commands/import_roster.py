@@ -30,7 +30,5 @@ class Command(BaseCommand):
         for error in result.errors:
             self.stderr.write(self.style.WARNING(error))
         self.stdout.write(
-            self.style.SUCCESS(
-                f"{cohort}: {result.created} created, {result.updated} updated."
-            )
+            self.style.SUCCESS(f"{cohort}: {result.created} created, {result.updated} updated.")
         )

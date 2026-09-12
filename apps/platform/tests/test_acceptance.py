@@ -41,9 +41,7 @@ def _take_quiz(client: Client, quiz: Quiz, email: str, consent: str = "yes") -> 
     total = quiz.quiz_items.count()
     for position in range(1, total + 1):
         client.get(reverse("quiz:question", args=[quiz.pk, position]))
-        client.post(
-            reverse("quiz:question", args=[quiz.pk, position]), {"chosen_option": "1"}
-        )
+        client.post(reverse("quiz:question", args=[quiz.pk, position]), {"chosen_option": "1"})
     client.post(reverse("quiz:usage_mode", args=[quiz.pk]), {"mode": "EXPLANATORY"})
 
 
@@ -222,9 +220,7 @@ def test_ac4_export_has_required_columns_and_no_name_or_email(
 
 
 @pytest.mark.django_db
-def test_ac5_unconsented_student_is_in_the_gradebook_but_not_the_export(
-    cohort, quiz
-) -> None:
+def test_ac5_unconsented_student_is_in_the_gradebook_but_not_the_export(cohort, quiz) -> None:
     refuser = Student.objects.create(
         cohort=cohort, name="Мария Иванова", email="maria@students.tu-sofia.bg"
     )

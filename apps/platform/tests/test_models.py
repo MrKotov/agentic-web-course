@@ -18,12 +18,8 @@ def test_item_is_administered_in_many_quizzes(items, cohort) -> None:
     post = Quiz.objects.create(lecture_number=1, phase=Phase.POST, cohort=cohort)
     next_pre = Quiz.objects.create(lecture_number=2, phase=Phase.PRE, cohort=cohort)
     QuizItem.objects.create(quiz=pre, item=item, position=1, measurement=Measurement.BASELINE)
-    QuizItem.objects.create(
-        quiz=post, item=item, position=1, measurement=Measurement.ACQUISITION
-    )
-    QuizItem.objects.create(
-        quiz=next_pre, item=item, position=1, measurement=Measurement.RETENTION
-    )
+    QuizItem.objects.create(quiz=post, item=item, position=1, measurement=Measurement.ACQUISITION)
+    QuizItem.objects.create(quiz=next_pre, item=item, position=1, measurement=Measurement.RETENTION)
 
     assert item.administrations.count() == 3
     assert set(item.administrations.values_list("measurement", flat=True)) == {
