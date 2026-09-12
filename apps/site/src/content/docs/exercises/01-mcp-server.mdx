@@ -1,0 +1,32 @@
+---
+title: "Упражнение 1: MCP сървър на ръка"
+description: "Довършете двата TODO-та в стартов MCP сървър, без SDK и без framework."
+---
+
+## Цел
+
+Да напишете, на ръка, сървър който говори MCP (Model Context Protocol) — протоколът, чрез
+който агент открива и извиква инструменти. Виж [Лекция 2](/lectures/02-agent-loop-and-mcp/)
+за механиката на протокола.
+
+## Стартов код
+
+`apps/examples/02-mcp-server/exercise/` — `src/server.ts` с два TODO-та, и failing test
+suite в `tests/`. Пълните инструкции, точната JSON Schema на инструмента `word_count` и
+трите примера за проверка са в `apps/examples/02-mcp-server/README.md`.
+
+## Очакван резултат
+
+`npm test` минава изцяло — сървърът отговаря правилно на `tools/list` и `tools/call`, и не
+пада при извикване на непознат инструмент.
+
+## Оценяване
+
+Автоматичният оценител стартира сървъра по конфигурацията в
+`apps/examples/02-mcp-server/.autograder/mcp-server.json`. Виж
+`handover/04-autograder.spec.md`.
+
+## Свързан код
+
+`apps/examples/02-mcp-server/` (демо в `demo/`, упражнение в `exercise/`, бележка за
+решение в `solution/`).

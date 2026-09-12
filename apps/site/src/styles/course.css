@@ -129,6 +129,77 @@
 .react-flow.course-flow .react-flow__handle { background: var(--course-accent); border-color: var(--course-surface-raised); }
 .react-flow.course-flow .react-flow__attribution a { color: var(--sl-color-gray-3); }
 
+/* ---- Prompt variance runner --------------------------------------------- */
+.pv__prompt { margin-block: 0.75rem; }
+.pv__promptBody { margin-top: 0.5rem; display: grid; gap: 0.35rem; }
+.pv__warn {
+  background: var(--course-surface-raised);
+  border: 1px solid var(--course-warn);
+  border-radius: var(--course-radius);
+  padding: 0.75rem;
+  margin-block: 0.75rem;
+}
+.pv__live { display: grid; gap: 0.6rem; margin-block: 0.75rem; }
+.pv__field { display: grid; gap: 0.3rem; font-size: 0.9em; }
+.pv__actions { margin-block: 0.75rem; align-items: center; }
+.pv__error {
+  color: var(--course-bad);
+  border: 1px solid var(--course-bad);
+  border-radius: var(--course-radius);
+  padding: 0.6rem 0.8rem;
+  margin-block: 0.75rem;
+}
+.pv__h { margin-top: 1.5rem; margin-bottom: 0.35rem; font-size: 1.05em; }
+
+.pv__summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.6rem;
+  margin: 0.75rem 0;
+}
+.pv__stat {
+  background: var(--course-surface-raised);
+  border: 1px solid var(--course-border);
+  border-radius: var(--course-radius);
+  padding: 0.5rem 0.7rem;
+}
+.pv__stat dt { font-size: 0.75em; opacity: 0.75; margin: 0; }
+.pv__stat dd { font-size: 1.3em; font-weight: 700; margin: 0; }
+.pv__stat dd[data-tone='ok'] { color: var(--course-ok); }
+.pv__stat dd[data-tone='warn'] { color: var(--course-warn); }
+.pv__stat dd[data-tone='bad'] { color: var(--course-bad); }
+
+.pv__matrixWrap { margin-block: 0.5rem 1.25rem; }
+.pv__matrix { border-collapse: collapse; width: 100%; font-size: 0.85em; }
+.pv__matrix th, .pv__matrix td {
+  border: 1px solid var(--course-border);
+  padding: 0.3em 0.55em;
+  text-align: center;
+  white-space: nowrap;
+}
+.pv__matrix th[scope='row'] { text-align: left; font-family: var(--course-mono); }
+.pv__matrix td[data-present='no'] { opacity: 0.4; }
+.pv__matrix tr[data-conflict] th[scope='row'] { color: var(--course-bad); }
+.pv__srOnly {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+.pv__runs { display: flex; gap: 0.75rem; padding-bottom: 0.25rem; }
+.pv__run {
+  min-width: 15rem; max-width: 20rem; flex: 0 0 auto;
+  background: var(--course-surface-raised);
+  border: 1px solid var(--course-border);
+  border-radius: var(--course-radius);
+  padding: 0.65rem 0.8rem;
+}
+.pv__run[data-open] { max-width: 32rem; }
+.pv__run header { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-bottom: 0.3rem; }
+.pv__raw {
+  margin-top: 0.5rem; max-height: 20rem; overflow: auto;
+  font-size: 0.85em; white-space: pre-wrap; word-break: break-word;
+}
+
 /* ---- Placeholder components not yet built ------------------------------ */
 .course-todo {
   border: 1px dashed var(--course-border);

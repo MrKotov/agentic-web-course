@@ -1,0 +1,36 @@
+---
+title: "Агентно уеб разработване"
+description: "Курс „Програмиране в Internet“, ТУ София, ФКСТ — учебник, презентация и интерактивна площадка в едно."
+template: splash
+hero:
+  tagline: Учебник, презентация в залата и интерактивна площадка — в един статичен сайт, без вход и без събирани данни.
+  actions:
+    - text: Лекция 1 — модели и агенти
+      link: /lectures/01-models-and-agents/
+      icon: right-arrow
+      variant: primary
+    - text: Конспект за изпит
+      link: /reference/conspectus/
+      icon: right-arrow
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Лекции" icon="rocket">
+    Десет лекции, агентно от самото начало. [Започнете от лекция 1](/lectures/01-models-and-agents/).
+  </Card>
+  <Card title="Упражнения" icon="pencil">
+    Пет упражнения, задължителни за допускане по текущото оценяване.
+    [Упражнение 1: MCP сървър](/exercises/01-mcp-server/).
+  </Card>
+  <Card title="Справочник" icon="open-book">
+    [Конспект за изпита](/reference/conspectus/) и
+    [инструменти и ключове](/reference/tooling/).
+  </Card>
+</CardGrid>
+
+Сайтът е статичен, публичен, без вход и не събира никакви данни за посетителя. Всеки
+интерактивен компонент работи и без ключ, и без мрежа, в записан режим — за да оцелее
+презентацията, ако интернетът в залата откаже, и за да може да учи от сайта и човек, който
+никога не е присъствал на лекция.

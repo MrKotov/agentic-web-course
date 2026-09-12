@@ -1,0 +1,70 @@
+name: Deploy course site to GitHub Pages
+
+# Lives at the monorepo root because GitHub Pages workflows must trigger from a
+# `.github/workflows/` directory at the *repository* root — Actions does not look inside
+# `apps/site/.github/`. The `paths` filter below scopes it to `apps/site/**` so a commit
+# to the platform, examples, or autograder never triggers a site deploy.
+#
+# When `apps/site/` is split into its own public repo (see docs/splitting-repos.md), this
+# file moves to that repo's own `.github/workflows/deploy-site.yml`, the `paths` filter is
+# removed (the whole repo is the site at that point), and every `working-directory:
+# apps/site` below is dropped along with the `apps/site/` path prefixes.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/site/**"
+      - ".github/workflows/deploy-site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/site
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: apps/site/.nvmrc
+          cache: npm
+          cache-dependency-path: apps/site/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+          SITE_BASE: /${{ github.event.repository.name }}/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/site/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
