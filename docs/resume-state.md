@@ -71,9 +71,24 @@ servers used as test fixtures, all tests, and `README.md`. The secret-handling a
 that keeps a shared secret out of the student's fork is undecided and is the one genuine
 design question left here.
 
-## Cross-cutting, not yet done
+## Cross-cutting, closed
 
-- Root `make check` has never been run end to end.
-- No CI workflow for the monorepo itself.
+- **`make check` now runs clean end to end** (34 tests, both `ruff check` runs, site
+  `npm run lint`). Running it surfaced a real gap: `make setup` used plain `uv sync`,
+  which skips the `dev` extra (ruff, black, pytest), so a fresh clone couldn't lint.
+  Fixed to `uv sync --extra dev` in both `apps/platform` and `packages/autograder`.
+- **CI added**: `.github/workflows/ci-platform.yml`, `ci-autograder.yml`, `ci-site.yml`,
+  each path-scoped like `deploy-site.yml` so an unrelated commit doesn't trigger it.
+- The `02-mcp-server` exercise's tool contract (`word_count`) was checked directly
+  against `packages/autograder/checks/ex01_mcp.py` and matches with no changes needed —
+  see the commit history for that folder.
+
+## Cross-cutting, still open
+
 - The autograder result contract exists on both sides (`packages/autograder/models.py`
-  and `apps/platform/autograder/`) but the two have never been tested against each other.
+  and `apps/platform/autograder/`) but CI does not yet test them against each other —
+  `ci-platform.yml` and `ci-autograder.yml` run independently. A change to the shared
+  JSON contract on one side would not currently fail the other side's CI.
+- `apps/examples/03-context` through `10-economics` are skeleton only (README + folder
+  shape); `08-security` and `09-brownfield` are README build-briefs with no code at all,
+  deliberately, per `handover/05-build-order.md`.

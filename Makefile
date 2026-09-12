@@ -19,8 +19,8 @@ help: ## Show available targets
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
 
 setup: ## Install both toolchains
-	cd $(PLATFORM) && uv sync
-	cd $(GRADER) && uv sync
+	cd $(PLATFORM) && uv sync --extra dev
+	cd $(GRADER) && uv sync --extra dev
 	cd $(SITE) && npm ci
 
 platform: ## Run the Django dev server
