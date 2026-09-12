@@ -129,6 +129,9 @@ const fieldRows = summary.fields.slice(0, 6);
     border-radius: 999px;
     padding: 0.15rem 0.65rem;
     flex: 1;
+    min-width: 0; /* flex items don't shrink below their content's natural width by
+                     default — without this, the ellipsis below never engages and the
+                     pill overflows its own flex container on narrow screens. */
     max-width: 22rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -201,6 +204,27 @@ const fieldRows = summary.fields.slice(0, 6);
   @media (prefers-reduced-motion: reduce) {
     .schema-diff-frame {
       transform: none;
+    }
+  }
+
+  /* This is meant to read as a clean screenshot, not a scrollable data table — so on
+     narrow screens it drops a column and tightens spacing to fit, rather than adding an
+     internal scrollbar (which would look like a broken screenshot) or letting the table
+     overflow the frame (the bug this replaces: nowrap cells across 5 columns are wider
+     than a 400px viewport, and the frame's own overflow:hidden just clipped it). */
+  @media (max-width: 26rem) {
+    .schema-diff-frame__body {
+      padding: 0.85rem 0.9rem 1rem;
+    }
+    .schema-diff-frame__table {
+      font-size: 0.7rem;
+    }
+    .schema-diff-frame__table th,
+    .schema-diff-frame__table td {
+      padding: 0.28rem 0.35rem;
+    }
+    .schema-diff-frame__table tr > :last-child {
+      display: none;
     }
   }
 </style>
