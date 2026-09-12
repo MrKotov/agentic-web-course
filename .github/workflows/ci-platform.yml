@@ -23,7 +23,10 @@ jobs:
       - uses: astral-sh/setup-uv@v3
         with:
           python-version: "3.13"
-      - run: uv sync --extra dev
+      # `--python 3.13` is required in addition to the action's python-version input:
+      # requires-python = ">=3.13" also matches 3.14, and psycopg-binary has no cp314
+      # wheel yet. Keep this pinned to whatever apps/platform/pyproject.toml targets.
+      - run: uv sync --extra dev --python 3.13
       - run: uv run ruff check .
       - run: uv run black --check .
       - run: uv run pytest

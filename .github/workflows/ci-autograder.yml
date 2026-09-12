@@ -23,7 +23,9 @@ jobs:
       - uses: astral-sh/setup-uv@v3
         with:
           python-version: "3.13"
-      - run: uv sync --extra dev
+      # Explicit --python pin: requires-python = ">=3.13" also matches newer 3.x, and
+      # the action's python-version input alone doesn't force uv to use it for sync.
+      - run: uv sync --extra dev --python 3.13
       - run: uv run ruff check .
       - run: uv run black --check .
       - run: uv run pytest
