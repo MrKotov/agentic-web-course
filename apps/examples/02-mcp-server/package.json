@@ -1,0 +1,19 @@
+{
+  "name": "course-02-mcp-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.12.0"
+  },
+  "scripts": {
+    "demo": "node demo/server-demo.ts",
+    "start": "node exercise/src/server.ts",
+    "test": "node --test \"exercise/tests/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "typescript": "5.9.3"
+  }
+}

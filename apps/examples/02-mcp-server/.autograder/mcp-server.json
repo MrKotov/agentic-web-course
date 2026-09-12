@@ -1,0 +1,4 @@
+{
+  "command": ["node", "src/server.ts"],
+  "cwd": "exercise"
+}
